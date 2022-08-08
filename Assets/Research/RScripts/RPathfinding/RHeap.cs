@@ -45,6 +45,14 @@ public class RHeap<T> where T : RIHeapItem<T> {
 
     #region Heap Functions
 
+    // Add
+    public void Add(T item) {
+        item.HeapIndex = _count;
+        _items[_count] = item;
+        SortUp(item);
+        _count++;
+    }
+
     // Remove head
     public T RemoveFirst() {
 

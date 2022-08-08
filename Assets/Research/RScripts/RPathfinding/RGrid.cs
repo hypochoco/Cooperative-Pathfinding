@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-// TODO :
-    // - find and return the neighbors of a thing...
-    // - Count, number of grid points
-
 public class RGrid<T> {
 
     #region Grid Variables
@@ -38,7 +34,7 @@ public class RGrid<T> {
     public RGrid(float cellSize) {
 
         // Initial grid size
-        int size = (int) Mathf.Pow(2, 6);
+        int size = 1;
 
         // Cell Size
         _cellSize = cellSize;
@@ -120,9 +116,9 @@ public class RGrid<T> {
         
         // Create new grid with the right size
         T[,,] newGrid = new T[
-            (x > currentX)? 2 * currentX : currentX,
-            (x > currentX)? 2 * currentX : currentX,
-            (x > currentX)? 2 * currentX : currentX
+            (x > currentX)? x : currentX,
+            (y > currentX)? y : currentY,
+            (z > currentX)? z : currentZ
             ];     
         
         // Transfer all items

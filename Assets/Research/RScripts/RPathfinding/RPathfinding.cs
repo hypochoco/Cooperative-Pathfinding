@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Handles Pathfinding
 public class RPathfinding {
 
     #region Pathfinding Variables
@@ -53,6 +54,8 @@ public class RPathfinding {
 
     }
 
+    #region NeighborList
+
     // Return RGridNode at given coordinate
     private RGridNode GetNode(int x, int y, int z) {
 
@@ -60,6 +63,7 @@ public class RPathfinding {
     
     }
 
+    // Find and return list of neighboring nodes
     private List<RGridNode> GetNeighbors(RGridNode currentNode) {
 
         int x = currentNode.x;
@@ -69,18 +73,194 @@ public class RPathfinding {
 
         if (x > 0) { // Left Nodes
 
+            // Left
             if (GetNode(x - 1, y, z) != null)
                 neighborList.Add(GetNode(x - 1, y, z));
+            
+            // Left Forward
+            if (y + 1 < _yLength && GetNode(x - 1, y + 1, z) != null)
+                neighborList.Add(GetNode(x - 1, y + 1, z));
+
+            // Left Backward
+            if (y > 0 && GetNode(x - 1, y - 1, z) != null)
+                neighborList.Add(GetNode(x - 1, y - 1, z));
+
+            // Left Up
+            if (z + 1 < _zLength && GetNode(x - 1, y, z + 1) != null)
+                neighborList.Add(GetNode(x - 1, y, z + 1));
+
+            // Left Down
+            if (z > 0 && GetNode(x - 1, y, z - 1) != null)
+                neighborList.Add(GetNode(x - 1, y, z - 1));
 
         }
 
         // Right Nodes
+        if (x + 1 < _xLength) {
+
+            // Right
+            if (GetNode(x + 1, y, z) != null)
+                neighborList.Add(GetNode(x + 1, y, z));
+            
+            // Right Forward
+            if (y + 1 < _yLength && GetNode(x + 1, y + 1, z) != null)
+                neighborList.Add(GetNode(x + 1, y + 1, z));
+
+            // Right Backward
+            if (y > 0 && GetNode(x + 1, y - 1, z) != null)
+                neighborList.Add(GetNode(x + 1, y - 1, z));
+
+            // Right Up
+            if (z + 1 < _zLength && GetNode(x + 1, y, z + 1) != null)
+                neighborList.Add(GetNode(x + 1, y, z + 1));
+
+            // Right Down
+            if (z > 0 && GetNode(x + 1, y, z - 1) != null)
+                neighborList.Add(GetNode(x + 1, y, z - 1));
+
+        }
 
         // Forward Nodes
+        if (y + 1 < _yLength) {
+
+            // Forward
+            if (GetNode(x, y + 1, z) != null)
+                neighborList.Add(GetNode(x, y + 1, z));
+
+            // Foward Up
+            if (z + 1 < _zLength && GetNode(x, y + 1, z + 1) != null)
+                neighborList.Add(GetNode(x, y + 1, z + 1));
+
+            // Forward Down
+            if (z > 0 && GetNode(x, y + 1, z - 1) != null)
+                neighborList.Add(GetNode(x, y + 1, z - 1));
+
+        }
 
         // Backward Nodes
+        if (y > 0) {
+
+            // Backward
+            if (GetNode(x, y - 1, z) != null)
+                neighborList.Add(GetNode(x, y - 1, z));
+
+            // Backward Up
+            if (z + 1 < _zLength && GetNode(x, y - 1, z + 1) != null)
+                neighborList.Add(GetNode(x, y - 1, z + 1));
+
+            // Backward Down
+            if (z > 0 && GetNode(x, y - 1, z - 1) != null)
+                neighborList.Add(GetNode(x, y - 1, z - 1));
+
+        }
 
         return neighborList;
+
+    }
+
+    #endregion
+
+    // Calculate Path
+    public List<RGridNode> CalculatePath(RGridNode endNode) {
+
+        // Path
+        List<RGridNode> path = new List<RGridNode>();
+
+        // Current Node
+        RGridNode currentNode = endNode;
+        path.Add(currentNode);
+
+        // Trace through PreviousNodes until startNode reached
+        while (currentNode.PreviousNode != null) {
+            path.Insert(0, currentNode.PreviousNode);
+            currentNode = currentNode.PreviousNode;
+        }
+        
+        // Return Path
+        return path;
+
+    }
+
+    // FindPath
+    public List<RGridNode> FindPath(int startX, int startY, int startZ,
+        int endX, int endY, int endZ) {
+        
+        // Initialize Start and End Nodes
+        RGridNode startNode = _grid.GetGridItem(startX, startY, startZ);
+        RGridNode endNode = _grid.GetGridItem(endX, endY, endZ);
+
+        // Ensure Start and End Nodes exist
+        if (startNode == null || endNode == null)
+            return null;
+        
+        // Open and Closed List for A*
+        _openList = new RHeap<RGridNode>(_xLength * _yLength * _zLength);
+        _closedList = new List<RGridNode>();
+
+        // Add startNode to openList
+        _openList.Add(startNode);
+
+        // Initialize all nodes
+        foreach (RGridNode node in _grid.Array) {
+            node.GCost = int.MaxValue;
+            node.CalculateFCost();
+            node.PreviousNode = null;
+        }
+
+        // Initialize Start Node
+        startNode.GCost = 0;
+        startNode.HCost = CalculateDistanceCost(startNode, endNode);
+        startNode.CalculateFCost();
+
+        // Main Pathfinding Loop
+        while (_openList.Count > 0) {
+            
+            // Find the node with the lowest value
+            RGridNode currentNode = _openList.RemoveFirst();
+
+            // Check if endNode reached
+            if (currentNode == endNode)
+                return CalculatePath(endNode);
+
+            // Add processed node to closedList
+            _closedList.Add(currentNode);
+
+            // Iterate through neighboring nodes
+            foreach (RGridNode neighborNode in GetNeighbors(currentNode)) {
+
+                // Stop if in the closedList
+                if (_closedList.Contains(neighborNode))
+                    continue;
+
+                // Stop if not walkable
+                if (!neighborNode.Walkable)
+                    continue;
+
+                // TODO : Stop if reserved in the table!!!
+                
+                // Tentative gCost
+                int tenativeGCost = currentNode.GCost + 
+                    CalculateDistanceCost(currentNode, neighborNode);
+                
+                // If gCost is lower
+                if (tenativeGCost < neighborNode.GCost) {
+
+                    neighborNode.PreviousNode = currentNode;
+                    neighborNode.GCost = tenativeGCost;
+                    neighborNode.HCost = CalculateDistanceCost(neighborNode, endNode);
+                    neighborNode.CalculateFCost();
+
+                    if (!_openList.Contains(neighborNode))
+                        _openList.Add(neighborNode);
+
+                }
+
+            }
+
+        }
+
+        // If path not found
+        return null;
 
     }
 
