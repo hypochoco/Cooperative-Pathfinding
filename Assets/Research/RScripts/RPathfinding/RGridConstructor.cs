@@ -36,7 +36,7 @@ public class RGridConstructor : MonoBehaviour {
     private void Start() {
 
         // intial variables
-        _cellSize = 0.25f;
+        _cellSize = 0.5f;
 
         // create a grid
         _grid = new RGrid<RGridNode>(_cellSize);
@@ -55,6 +55,9 @@ public class RGridConstructor : MonoBehaviour {
 
             (int x, int y, int z) = _grid.GetCoord(position);
             RGridNode test = new RGridNode(x, y, z);
+
+            Debug.Log("x: " + x + " y: " + y + " z: " + z);
+
             _grid.Add(x, y, z, test);
             
         }

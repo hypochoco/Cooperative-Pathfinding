@@ -7,45 +7,62 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private Transform _t;
     [SerializeField] private Rigidbody _rb;
 
-    private List<Vector3> _path;
-    private int _pathIndex;
-    private Vector3 dir; 
-
-
-    public void Update() {
-
-        if (_path != null) {
-
-            if ((_t.position - _path[_pathIndex]).sqrMagnitude < 1) {
-                _pathIndex++;
-                dir = _path[_pathIndex] - _t.position;
-                dir.y = 0;
-                dir = dir.normalized;
-            }
-            
-            _rb.MovePosition(_path[_pathIndex]);
-
-        }
-
-    }
+    private bool hopping;
 
 
     public void FollowPath(List<Vector3> path) {
 
-        _pathIndex = 0;
-        _path = path;
-
-        dir = _path[_pathIndex] - _t.position;
-        dir.y = 0;
-        dir = dir.normalized;
+        StartCoroutine(HopTargetList(path));
 
     }
 
+    // Hop toward the target object
+    IEnumerator HopTarget(Vector3 target) {
 
+        hopping = true;
 
+        // While true...
+        while (true) {
 
+            // Look at the correct direction
+            Vector3 dir = target - _t.position;
+            Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
+            rot.x = 0;
+            rot.z = 0;
+            _t.rotation = rot; 
 
+            // Hop toward target
+            Vector3 ndir = dir.normalized;
+            ndir.y = 0.5f;
+            _rb.AddForce(ndir * 100);
 
+            // Wait for hop to end
+            yield return new WaitForSeconds(0.45f);
 
+            if ((_t.position - target).sqrMagnitude < 1f)
+                break;
+
+        }
+
+        hopping = false;
+
+        yield break;
+
+    }
+
+    IEnumerator HopTargetList(List<Vector3> path) {
+
+        foreach (Vector3 target in path) {
+
+            StartCoroutine(HopTarget(target));
+
+            while (hopping)
+                yield return null;
+
+        }
+
+        yield break;
+
+    }
 
 }
