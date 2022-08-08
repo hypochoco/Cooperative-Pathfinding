@@ -14,11 +14,16 @@ public class RGrid<T> {
     // Grid Variables
     private float _cellSize;
     private T[,,] _grid;
+    private int _count;
 
     // Getters and Setters
     public float CellSize {
         get { return _cellSize; }
         private set {}
+    }
+    public int Count {
+        get { return _count; }
+        private set {} 
     }
     public T[,,] Array {
         get { return _grid; }
@@ -37,6 +42,9 @@ public class RGrid<T> {
 
         // Cell Size
         _cellSize = cellSize;
+
+        // Count
+        _count = 0;
 
         // Empty Grid
         _grid = new T[size, size, size];
@@ -59,6 +67,9 @@ public class RGrid<T> {
 
         // Add the item to the grid
         _grid[x, y, z] = entry;
+
+        // Increase the count
+        _count++;
 
     }
 

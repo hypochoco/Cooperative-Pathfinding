@@ -4,7 +4,7 @@ using UnityEngine;
 
 // TODO : weights for pathfinding
 
-public class RGridNode {
+public class RGridNode : RIHeapItem<RGridNode> {
 
     #region Grid Node Variables
 
@@ -86,7 +86,7 @@ public class RGridNode {
 
     // Compare Function
     public int CompareTo(RGridNode node) {
-        
+
         int compare = _fCost.CompareTo(node.FCost);
         if (compare == 0)
             compare = _hCost.CompareTo(node.HCost);
