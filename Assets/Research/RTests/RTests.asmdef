@@ -1,0 +1,12 @@
+{
+    "name": "RTests",
+    "references": [
+        "ResearchAssembly"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}
