@@ -23,6 +23,12 @@ public class RGridConstructor : MonoBehaviour {
     private float _cellSize;
     private RGrid<RGridNode> _grid; 
 
+    // Getters and Setters
+    public RGrid<RGridNode> Grid {
+        get { return _grid; }
+        private set {}
+    }
+
     #endregion
 
     #region Grid Constructor Functions
