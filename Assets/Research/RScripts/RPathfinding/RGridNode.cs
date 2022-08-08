@@ -94,6 +94,13 @@ public class RGridNode : RIHeapItem<RGridNode> {
 
     }
 
+    // Testing Purposes
+    public override string ToString() {
+
+        return "(" + _x + ", " + _y + ", " + _z + ")";
+
+    }
+
     #endregion
 
 }

@@ -16,7 +16,7 @@ public interface RIHeapItem<T> : IComparable<T> {
 #endregion
 
 // Classic Heap
-public class RHeap<T> where T : IHeapItem<T> {
+public class RHeap<T> where T : RIHeapItem<T> {
 
     #region Heap Variables
 
@@ -145,7 +145,7 @@ public class RHeap<T> where T : IHeapItem<T> {
         _items[itemB.HeapIndex] = itemA;
 
         int itemAIndex = itemA.HeapIndex;
-        
+
         itemA.HeapIndex = itemB.HeapIndex;
         itemB.HeapIndex = itemAIndex;
 

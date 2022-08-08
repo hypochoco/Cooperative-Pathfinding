@@ -94,7 +94,15 @@ public class RGrid<T> {
     // Obtain a grid item
     public T GetGridItem(int x, int y, int z) {
 
-        return _grid[x, y, z];
+        try {
+
+            return _grid[x, y, z];
+
+        } catch (NullReferenceException) {
+
+            return default(T);
+
+        }
 
     }
 
