@@ -43,8 +43,9 @@ public class RGridConstructor : MonoBehaviour {
 
         // add to the grid
         foreach (Vector3 position in testList) {
-            RGridNode test = new RGridNode(true, position);
-            (int x, int y, int z) = _grid.GetCoord(test.Position);
+
+            (int x, int y, int z) = _grid.GetCoord(position);
+            RGridNode test = new RGridNode(x, y, z);
             _grid.Add(x, y, z, test);
             
         }
@@ -73,8 +74,11 @@ public class RGridConstructor : MonoBehaviour {
             if (node == null)
                 continue;
 
+            // Convert 
+            Vector3 pos = _grid.GetWorld(node.x, node.y, node.z);
+
             // Draw cube at each point
-            Gizmos.DrawCube(node.Position, new Vector3(s, s, s));
+            Gizmos.DrawCube(pos, new Vector3(s, s, s));
         }
     }
 

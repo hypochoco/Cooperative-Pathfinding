@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-// // WARN : the grid assume that grid points are nonnegative
-// // TODO : test positions when the point isn't defined 
+// TODO :
+    // - find and return the neighbors of a thing...
+    // - Count, number of grid points
 
 public class RGrid<T> {
 
