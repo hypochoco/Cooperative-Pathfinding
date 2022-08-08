@@ -106,9 +106,9 @@ public class RGrid<T> {
     public void Resize(int x, int y, int z) {
 
         // Initial variables
-        int currentX = _grid.GetLength(0);
-        int currentY = _grid.GetLength(1);
-        int currentZ = _grid.GetLength(2);
+        int currentX = _grid.GetLength(0) - 1;
+        int currentY = _grid.GetLength(1) - 1;
+        int currentZ = _grid.GetLength(2) - 1;
 
         // Stop if within the size
         if (x <= currentX && y <= currentY && z <= currentZ)
@@ -116,15 +116,15 @@ public class RGrid<T> {
         
         // Create new grid with the right size
         T[,,] newGrid = new T[
-            (x > currentX)? x : currentX,
-            (y > currentX)? y : currentY,
-            (z > currentX)? z : currentZ
-            ];     
-        
+            (x > currentX)? x + 1 : currentX + 1,
+            (y > currentX)? y + 1 : currentY + 1,
+            (z > currentX)? z + 1 : currentZ + 1
+            ];
+
         // Transfer all items
-        for (int i = 0; i < currentX; i++) {
-            for (int j = 0; j < currentY; j++) {
-                for (int k = 0; k < currentZ; k++) {
+        for (int i = 0; i <= currentX; i++) {
+            for (int j = 0; j <= currentY; j++) {
+                for (int k = 0; k <= currentZ; k++) {
                     newGrid[i, j, k] = _grid[i, j, k];
                 }
             }

@@ -36,10 +36,13 @@ public class RGridConstructor : MonoBehaviour {
         _grid = new RGrid<RGridNode>(_cellSize);
 
         // list of grid object positions
-        List<Vector3> testList = new List<Vector3>() {
-            Vector3.one,
-            Vector3.zero
-        };
+        List<Vector3> testList = new List<Vector3>() {};
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                testList.Add(new Vector3(i * _cellSize, 0, j * _cellSize));
+            }
+        }
 
         // add to the grid
         foreach (Vector3 position in testList) {
