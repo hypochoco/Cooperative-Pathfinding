@@ -9,19 +9,50 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private Transform _t;
     [SerializeField] private Rigidbody _rb;
 
+    private Vector3 _goal;
+    private bool _goalReached;
+
     private List<Vector3> _path;
     private bool _followingPath;
     private Coroutine _pathing;
+
+    // Getters and Setters
+    public List<Vector3> Path {
+        get { return _path; }
+        set { _path = value; }
+    }
+
+    public Vector3 Goal {
+        get { return _goal; }
+        set { _goal = value; }
+    }
+    public bool GoalReached {
+        get { return _goalReached; }
+        private set {}
+    }
 
     #endregion
 
     #region RAgent Functions
 
-    // Follow Path
-    public void FollowPath(List<Vector3> path) {
+    private void Update() {
 
-        // Set Path
-        _path = path;
+        if (!_goalReached) {
+            if ((_t.position - _goal).sqrMagnitude < 0.25f) {
+                _goalReached = true;
+            }
+        }
+
+    }
+
+    // Follow Path
+    public void FollowPath(int timeStep) {
+
+        // Ensure path exists
+        if (_path == null)
+            return;
+
+        _path = _path.GetRange(0, timeStep);
 
         // Start pathing coroutine
         if (_pathing != null)
@@ -56,6 +87,7 @@ public class RAgent : MonoBehaviour {
 
                 if ((_t.position - target).sqrMagnitude < 0.25f)
                     break;
+                
             }
 
         }

@@ -5,16 +5,16 @@ using UnityEngine;
 // Todo
     // - store the first conflict
     
-
-
 public class RResTable {
     
     #region ResTable Variables
 
     // ResTable Variables
     private Dictionary<(int, int, int, int), List<RAgent>> _travellersList;
-    private Dictionary<(int, int, int, int), RAgent> _resTable;
-    
+    private Dictionary<(int, int, int), RAgent> _resTable;
+
+    private (int, int, int, int) conflict;
+
     #endregion
 
     #region Constructor
@@ -23,7 +23,7 @@ public class RResTable {
     public RResTable() {
 
         _travellersList = new Dictionary<(int, int, int, int), List<RAgent>>();
-        _resTable = new Dictionary<(int, int, int, int), RAgent>();
+        _resTable = new Dictionary<(int, int, int), RAgent>();
         
     }
 
@@ -37,6 +37,10 @@ public class RResTable {
         try {
         
             _travellersList[stpoint].Add(agent);
+            if (_travellersList[stpoint].Count > 1 && stpoint.Item4 < conflict.Item4) {
+                conflict = stpoint;
+            }
+                
         
         } catch (KeyNotFoundException) {
         
@@ -62,19 +66,18 @@ public class RResTable {
     
     }
 
-    // Reserve path on resTable
-    public void ReservePath(List<(int, int, int, int)> stpoints, RAgent agent) {
+    // // Reserve path on resTable
+    // public void ReservePath(RAgent agent, int conflictTime) {
         
-        foreach(var stpoint in stpoints) {
-        
-            _resTable[stpoint] = agent;
-        
-        }
+    //     List<Vector3> reserved = agent.Path.GetRange(conflictTime - 3, conflictTime + 4);
+    //     foreach (Vector3 point in reserved) {
+    //         _resTable[]
+    //     }
     
-    }
+    // }
 
     // Check if reserved
-    public bool STPointReserved((int, int, int, int) stpoint) {
+    public bool STPointReserved((int, int, int) stpoint) {
         
         try {
         
@@ -99,7 +102,7 @@ public class RResTable {
     // Clear the reservation table
     public void ClearResTable() {
     
-        _resTable = new Dictionary<(int, int, int, int), RAgent>();
+        _resTable = new Dictionary<(int, int, int), RAgent>();
     
     }
 

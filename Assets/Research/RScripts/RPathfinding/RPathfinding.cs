@@ -22,6 +22,12 @@ public class RPathfinding {
     private int _yLength;
     private int _zLength;
 
+    // Getters and Setters
+    public RResTable ResTable {
+        get { return _resTable; }
+        private set {}
+    }
+
     #endregion
 
     #region Constructor
@@ -161,7 +167,7 @@ public class RPathfinding {
     #endregion
 
     // Calculate Path
-    public List<RGridNode> CalculatePath(RGridNode endNode) {
+    public List<RGridNode> CalculatePath(RAgent agent, RGridNode endNode) {
 
         // Path
         List<RGridNode> path = new List<RGridNode>();
@@ -175,6 +181,13 @@ public class RPathfinding {
             path.Insert(0, currentNode.PreviousNode);
             currentNode = currentNode.PreviousNode;
         }
+
+        // Add Travellers
+        int i = 0;
+        foreach (RGridNode node in path) {
+            _resTable.AddTraveller((node.x, node.y, node.z, i), agent);
+            i++;
+        }
         
         // Return Path
         return path;
@@ -182,7 +195,7 @@ public class RPathfinding {
     }
 
     // FindPath
-    public List<RGridNode> FindPath(int startX, int startY, int startZ,
+    public List<RGridNode> FindPath(RAgent agent, int startX, int startY, int startZ,
         int endX, int endY, int endZ) {
         
         // Initialize Start and End Nodes
@@ -224,7 +237,7 @@ public class RPathfinding {
 
             // Check if endNode reached
             if (currentNode == endNode)
-                return CalculatePath(endNode);
+                return CalculatePath(agent, endNode);
 
             // Add processed node to closedList
             _closedList.Add(currentNode);

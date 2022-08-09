@@ -21,9 +21,9 @@ public class RSelection : MonoBehaviour {
                     rSelectable.ToggleSelect();
                 }
 
-                if (hit.collider.gameObject.TryGetComponent<RGround>(out var ground)) {
-                    _rPathHandler.RequestPath(hit.point);
-                }
+                // if (hit.collider.gameObject.TryGetComponent<RGround>(out var ground)) {
+                //     _rPathHandler.RequestPath(hit.point);
+                // }
 
             }
         }
