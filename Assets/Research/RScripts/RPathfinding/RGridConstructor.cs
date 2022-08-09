@@ -41,26 +41,31 @@ public class RGridConstructor : MonoBehaviour {
         // create a grid
         _grid = new RGrid<RGridNode>(_cellSize);
 
-        // list of grid object positions
-        List<Vector3> testList = new List<Vector3>() {};
-
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                testList.Add(new Vector3(i * _cellSize, 0, j * _cellSize));
+                RGridNode test = new RGridNode(i, 0, j);
+                _grid.Add(i, 0, j, test);
             }
         }
 
-        // add to the grid
-        foreach (Vector3 position in testList) {
+        // // Manual Grid Additions
+        RGridNode test0 = new RGridNode(10, 1, 5);
+        _grid.Add(test0.x, test0.y, test0.z, test0);
 
-            (int x, int y, int z) = _grid.GetCoord(position);
-            RGridNode test = new RGridNode(x, y, z);
+        // // Manual Grid Additions
+        // RGridNode test0 = new RGridNode(5, 1, 5);
+        // _grid.Add(test0.x, test0.y, test0.z, test0);
 
-            Debug.Log("x: " + x + " y: " + y + " z: " + z);
+        // Manual Grid Additions
+        // RGridNode test0 = new RGridNode(10, 0, 0);
+        // _grid.Add(test0.x, test0.y, test0.z, test0);
 
-            _grid.Add(x, y, z, test);
-            
-        }
+        
+        // Debug.Log(_grid.GetGridItem(5, 1, 5));
+
+        // Debug.Log(_grid.Array.GetLength(0));
+        // Debug.Log(_grid.Array.GetLength(1));
+        // Debug.Log(_grid.Array.GetLength(2));
 
     }
 

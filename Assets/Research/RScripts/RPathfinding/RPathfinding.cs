@@ -202,6 +202,10 @@ public class RPathfinding {
 
         // Initialize all nodes
         foreach (RGridNode node in _grid.Array) {
+
+            if (node == null)
+                continue;
+
             node.GCost = int.MaxValue;
             node.CalculateFCost();
             node.PreviousNode = null;

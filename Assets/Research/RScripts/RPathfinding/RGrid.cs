@@ -98,6 +98,10 @@ public class RGrid<T> {
 
             return default(T);
 
+        } catch (IndexOutOfRangeException) {
+
+            return default(T);
+
         }
 
     }
@@ -105,7 +109,7 @@ public class RGrid<T> {
     // Resize the underlying array
     public void Resize(int x, int y, int z) {
 
-        // Initial variables
+        // Initial Sizes
         int currentX = _grid.GetLength(0) - 1;
         int currentY = _grid.GetLength(1) - 1;
         int currentZ = _grid.GetLength(2) - 1;
@@ -113,13 +117,13 @@ public class RGrid<T> {
         // Stop if within the size
         if (x <= currentX && y <= currentY && z <= currentZ)
             return;
-        
-        // Create new grid with the right size
+
+        // Create new Grid
         T[,,] newGrid = new T[
-            (x > currentX)? x + 1 : currentX + 1,
-            (y > currentX)? y + 1 : currentY + 1,
-            (z > currentX)? z + 1 : currentZ + 1
-            ];
+            (int) Mathf.Max(x, currentX) + 1,
+            (int) Mathf.Max(y, currentY) + 1,
+            (int) Mathf.Max(z, currentZ) + 1
+        ];
 
         // Transfer all items
         for (int i = 0; i <= currentX; i++) {
