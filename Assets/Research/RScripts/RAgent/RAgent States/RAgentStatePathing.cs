@@ -10,9 +10,36 @@ public class RAgentStatePathing : RAgentState {
     // State Variables
     private float _turnDst;
     private float _turnSpeed;
-    private float _movemntSpeed;
+    private float _movementSpeed;
+    private float _gravMultiplier;
     private RPath _path;
     private int _pathIndex;
+
+    // Getters and Setters
+    public float TurnDst {
+        get { return _turnDst; }
+        private set {}
+    }
+    public float TurnSpeed {
+        get { return _turnSpeed; }
+        private set {}
+    }
+    public float MovementSpeed {
+        get { return _movementSpeed; }
+        private set {}
+    }
+    public float GravMultiplier {
+        get { return _gravMultiplier; }
+        private set {}
+    }
+    public RPath Path {
+        get { return _path; }
+        private set {}
+    }
+    public int PathIndex {
+        get { return _pathIndex; } 
+        private set {}
+    }
 
     #endregion
 
@@ -36,14 +63,16 @@ public class RAgentStatePathing : RAgentState {
 
         // Testing Purposes
         Ctx.DebugPath = _path;
+        Ctx.Material.color = Color.red;
 
         // Substate
         InitializeSubState();
 
         // Set Initial Variables
         _turnDst = 2f;
-        _turnSpeed = 200f;
-        _movemntSpeed = 100f;
+        _turnSpeed = 50f;
+        _movementSpeed = 100f;
+        _gravMultiplier = 1f;
         _pathIndex = 0;
 
     }
@@ -61,22 +90,13 @@ public class RAgentStatePathing : RAgentState {
             }
         }
 
-        // Look at next point
-        Quaternion targetRotation = 
-            Quaternion.LookRotation(_path.LookPoints[_pathIndex] - 
-            Ctx.Transform.position);
-        targetRotation.x = 0;
-        targetRotation.z = 0;
-        Ctx.Transform.rotation = Quaternion.Lerp(Ctx.Transform.rotation, 
-            targetRotation, Time.deltaTime * _turnSpeed);
-
     }
     public override void CheckSwitchState() {}
     public override void FixedUpdateState() {}
     public override void InitializeSubState() {
 
         // Gounded Substate
-        SetSubState(Factory.PathingGrounded());
+        SetSubState(Factory.PathingGrounded(this));
         CurrentSubState.EnterState();
 
     }
@@ -85,9 +105,6 @@ public class RAgentStatePathing : RAgentState {
 
         // Testing Purposes
         Ctx.DebugPath = null;
-
-        // Remove Path
-        _path = null;
 
     }
 

@@ -11,7 +11,7 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private Transform _t;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Renderer _r;
-    private bool _grounded;
+    [SerializeField] private bool _grounded;
     private float _distToGround;
     private Material _m;
     private bool _pathing;

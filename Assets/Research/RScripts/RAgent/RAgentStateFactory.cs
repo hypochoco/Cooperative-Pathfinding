@@ -34,13 +34,13 @@ public class RAgentStateFactory {
     }
 
     // Pathing Grounded Sub State
-    public RAgentState PathingGrounded() {
-        return new RAgentStatePathingGrounded(_stateMachine, this);
+    public RAgentState PathingGrounded(RAgentStatePathing PathingCtx) {
+        return new RAgentStatePathingGrounded(_stateMachine, this, PathingCtx);
     }
 
     // Pathing Jump Sub State
-    public RAgentState PathingJump() {
-        return new RAgentStatePathingJump(_stateMachine, this);
+    public RAgentState PathingFalling(RAgentStatePathing PathingCtx) {
+        return new RAgentStatePathingFalling(_stateMachine, this, PathingCtx);
     }
 
     #endregion
