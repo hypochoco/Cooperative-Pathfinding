@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// R Toggle Selectable
+// RToggleSelectable
 public class RToggleSelectableAction : RAction {
 
     #region Action Variables
@@ -17,10 +17,8 @@ public class RToggleSelectableAction : RAction {
 
     // Constructor
     public RToggleSelectableAction(ref bool actionCompleted, RSelectable rSelectable) {
-
         _actionCompleted = actionCompleted;
         _rSelectable = rSelectable;
-
     }
 
     #endregion

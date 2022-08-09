@@ -4,8 +4,6 @@ using UnityEngine;
 
 // RAction Interface
 public interface RAction {
-
     // Start RAction
     public void StartAction();
-    
 }

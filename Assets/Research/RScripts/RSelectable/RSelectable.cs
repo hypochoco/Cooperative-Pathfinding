@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// R Selectable
+// RSelectable
 public class RSelectable : MonoBehaviour {
     
     #region RSelectable Variables

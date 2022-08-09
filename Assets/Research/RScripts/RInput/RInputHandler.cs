@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// R Input Handling
+// RInputHandler
 public class RInputHandler : MonoBehaviour {
 
-    #region Input Priorities
+    #region RInputHandler Priorities
 
     // 0 - Do Nothing
     // 1 - Move
@@ -13,7 +13,7 @@ public class RInputHandler : MonoBehaviour {
 
     #endregion
 
-    #region Input Handler Variables
+    #region RInputHandler Variables
 
     // Reference Variables
     private Camera _mainCam; 
@@ -50,7 +50,7 @@ public class RInputHandler : MonoBehaviour {
 
     #endregion
 
-    #region Input Handler Functions
+    #region RInputHandler Functions
 
     // Finds all objects clicked
     private RaycastHit[] CastRay() {
