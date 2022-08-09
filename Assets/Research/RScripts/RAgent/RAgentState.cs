@@ -2,6 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#region State Skeleton
+
+// public class RAgentStateIdle : RAgentState {
+
+//     #region State Variables
+
+//     #endregion
+
+//     #region Constructor
+
+//     // Constructor
+//     public RAgentStateIdle(RAgent _stateMachine, 
+//         RAgentStateFactory _stateFactory) : 
+//         base (_stateMachine, _stateFactory) {}
+    
+//     #endregion
+
+//     #region State Functions
+
+//     public override void EnterState() {}
+//     public override void UpdateState() {}
+//     public override void CheckSwitchState() {}
+//     public override void FixedUpdateState() {}
+//     public override void InitializeSubState() {}
+//     public override void ExitState() {}
+
+//     #endregion
+    
+// }
+
+#endregion
+
 public abstract class RAgentState {
     
     #region State Variables
@@ -90,7 +122,6 @@ public abstract class RAgentState {
         } else if (_currentSuperState != null) {
             _currentSuperState.SetSubState(newState);
         }
-            
     }
 
     // Set SuperState

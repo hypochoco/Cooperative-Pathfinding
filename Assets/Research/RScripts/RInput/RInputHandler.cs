@@ -17,8 +17,7 @@ public class RInputHandler : MonoBehaviour {
 
     // Reference Variables
     private Camera _mainCam; 
-
-    // RPathHandler... 
+    [SerializeField] private RPathHandler _rPathHandler;
 
     // Input Handler Variables
     private bool _actionCompleted;
@@ -79,6 +78,7 @@ public class RInputHandler : MonoBehaviour {
 
             GameObject hitObj = hit.collider.gameObject;
 
+            // RSelectable Action
             if (hitObj.TryGetComponent<RSelectable>(out var rSelectable)) {
                 if (actionPriority < 2) {
                     actionPriority = 2;
@@ -86,10 +86,13 @@ public class RInputHandler : MonoBehaviour {
                 }
             }
 
-            // if (hit.collider.gameObject.TryGetComponent<RGround>(out var ground)) {
-            //     _rPathHandler.RequestPath(hit.point);
-            // }
-
+            // Movement Action
+            else {
+                if (actionPriority < 1) {
+                    actionPriority = 1;
+                    action = new RMoveAction(ref _actionCompleted, _rPathHandler, hit.point);
+                }
+            }
         }
 
         // Enqueue Action
