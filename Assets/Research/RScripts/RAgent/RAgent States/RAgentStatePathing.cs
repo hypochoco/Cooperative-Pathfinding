@@ -51,7 +51,12 @@ public class RAgentStatePathing : RAgentState {
     }
 
     public override void UpdateState() {}
-    public override void CheckSwitchState() {}
+
+    public override void CheckSwitchState() {
+        if (!Ctx.Pathing)
+            SwitchState(Factory.Idle());
+    }
+
     public override void FixedUpdateState() {}
     public override void InitializeSubState() {}
     public override void ExitState() {}
@@ -67,7 +72,17 @@ public class RAgentStatePathing : RAgentState {
         Rigidbody rb = Ctx.Rigidbody;
         int pathIndex = 0;
 
+        // Look at first point
+        Quaternion targetRotation = 
+            Quaternion.LookRotation(_path.LookPoints[pathIndex] - t.position);
+        targetRotation.x = 0;
+        targetRotation.z = 0;
+        t.rotation = targetRotation;
+
         while (true) {
+
+            yield return null;
+            yield return null;
 
             // Increase pathIndex or stop coroutine
             Vector2 pos2D = new Vector2(t.position.x, t.position.z);
@@ -80,7 +95,7 @@ public class RAgentStatePathing : RAgentState {
             }
 
             // Look at next point
-            Quaternion targetRotation = 
+            targetRotation = 
                 Quaternion.LookRotation(_path.LookPoints[pathIndex] - t.position);
             targetRotation.x = 0;
             targetRotation.z = 0;
@@ -88,7 +103,8 @@ public class RAgentStatePathing : RAgentState {
                 Time.deltaTime * _turnSpeed);
 
             // Move toward next point
-            rb.AddRelativeForce(_movemntSpeed * new Vector3(0, 1, 1));
+            float magnitude = Mathf.Clamp01((_path.LookPoints[pathIndex] - t.position).sqrMagnitude + 0.5f);
+            rb.AddRelativeForce(_movemntSpeed * new Vector3(0, 1, magnitude));
 
             // Wait
             yield return new WaitForSeconds(0.45f);
@@ -100,6 +116,8 @@ public class RAgentStatePathing : RAgentState {
 
         // Stop Coroutine
         Ctx.Pathing = false;
+        Ctx.DebugPath = null;
+        _path = null;
         yield break;
 
     }

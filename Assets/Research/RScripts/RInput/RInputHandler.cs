@@ -20,7 +20,7 @@ public class RInputHandler : MonoBehaviour {
     [SerializeField] private RPathHandler _rPathHandler;
 
     // Input Handler Variables
-    private bool _actionCompleted;
+    [SerializeField] private bool _actionCompleted;
     private Queue<RAction> _queue;
 
     #endregion
