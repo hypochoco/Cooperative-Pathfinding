@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// R Selectable
 public class RSelectable : MonoBehaviour {
     
+    #region RSelectable Variables
+
     // Selectable References
     [SerializeField] private Transform _t;
     [SerializeField] private GameObject _selectIconPrefab;
@@ -11,6 +14,10 @@ public class RSelectable : MonoBehaviour {
     // Selectable Variables
     private bool _selected;
     private GameObject _selectIcon;
+
+    #endregion
+
+    #region Unity Functions
 
     // Initialize select 
     private void Start() {
@@ -27,15 +34,17 @@ public class RSelectable : MonoBehaviour {
 
     }
 
+    #endregion
+
+    #region RSelectable Functions
+
     // Toogle the selection
     public void ToggleSelect() {
-
         if (_selected) {
             Deselect();
         } else {
             Select();
         }
-
     }
 
     // Deselection indication
@@ -46,6 +55,7 @@ public class RSelectable : MonoBehaviour {
 
         // Hide selection icon
         _selectIcon.SetActive(false);
+
     }
 
     // Selection indication
@@ -58,5 +68,7 @@ public class RSelectable : MonoBehaviour {
         _selectIcon.SetActive(true);
 
     }
+
+    #endregion
 
 }
