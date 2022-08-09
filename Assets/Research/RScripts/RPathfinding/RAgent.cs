@@ -7,6 +7,8 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private Transform _t;
     [SerializeField] private Rigidbody _rb;
 
+    private List<Vector3> _path;
+
     private bool hopping;
 
 
@@ -52,6 +54,8 @@ public class RAgent : MonoBehaviour {
 
     IEnumerator HopTargetList(List<Vector3> path) {
 
+        _path = path;
+
         foreach (Vector3 target in path) {
 
             StartCoroutine(HopTarget(target));
@@ -62,6 +66,21 @@ public class RAgent : MonoBehaviour {
         }
 
         yield break;
+
+    }
+
+    public void OnDrawGizmos() {
+
+        if (_path == null)
+            return;
+            
+        Gizmos.color = Color.red;
+
+        foreach (var point in _path) {
+            
+            Gizmos.DrawCube(point, 0.125f * Vector3.one);
+
+        }
 
     }
 

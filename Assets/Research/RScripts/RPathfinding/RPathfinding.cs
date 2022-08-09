@@ -76,22 +76,22 @@ public class RPathfinding {
             // Left
             if (GetNode(x - 1, y, z) != null)
                 neighborList.Add(GetNode(x - 1, y, z));
-            
+
             // Left Forward
-            if (y + 1 < _yLength && GetNode(x - 1, y + 1, z) != null)
-                neighborList.Add(GetNode(x - 1, y + 1, z));
-
-            // Left Backward
-            if (y > 0 && GetNode(x - 1, y - 1, z) != null)
-                neighborList.Add(GetNode(x - 1, y - 1, z));
-
-            // Left Up
             if (z + 1 < _zLength && GetNode(x - 1, y, z + 1) != null)
                 neighborList.Add(GetNode(x - 1, y, z + 1));
 
-            // Left Down
+            // Left Backward
             if (z > 0 && GetNode(x - 1, y, z - 1) != null)
                 neighborList.Add(GetNode(x - 1, y, z - 1));
+            
+            // Left Up
+            if (y + 1 < _yLength && GetNode(x - 1, y + 1, z) != null)
+                neighborList.Add(GetNode(x - 1, y + 1, z));
+
+            // Left Down
+            if (y > 0 && GetNode(x - 1, y - 1, z) != null)
+                neighborList.Add(GetNode(x - 1, y - 1, z));
 
         }
 
@@ -101,55 +101,55 @@ public class RPathfinding {
             // Right
             if (GetNode(x + 1, y, z) != null)
                 neighborList.Add(GetNode(x + 1, y, z));
-            
+
             // Right Forward
-            if (y + 1 < _yLength && GetNode(x + 1, y + 1, z) != null)
-                neighborList.Add(GetNode(x + 1, y + 1, z));
-
-            // Right Backward
-            if (y > 0 && GetNode(x + 1, y - 1, z) != null)
-                neighborList.Add(GetNode(x + 1, y - 1, z));
-
-            // Right Up
             if (z + 1 < _zLength && GetNode(x + 1, y, z + 1) != null)
                 neighborList.Add(GetNode(x + 1, y, z + 1));
 
-            // Right Down
+            // Right Backward
             if (z > 0 && GetNode(x + 1, y, z - 1) != null)
                 neighborList.Add(GetNode(x + 1, y, z - 1));
+            
+            // Right Up
+            if (y + 1 < _yLength && GetNode(x + 1, y + 1, z) != null)
+                neighborList.Add(GetNode(x + 1, y + 1, z));
+
+            // Right Down
+            if (y > 0 && GetNode(x + 1, y - 1, z) != null)
+                neighborList.Add(GetNode(x + 1, y - 1, z));
 
         }
 
         // Forward Nodes
-        if (y + 1 < _yLength) {
+        if (z + 1 < _zLength) {
 
             // Forward
-            if (GetNode(x, y + 1, z) != null)
-                neighborList.Add(GetNode(x, y + 1, z));
+            if (GetNode(x, y, z + 1) != null)
+                neighborList.Add(GetNode(x, y, z + 1));
 
             // Foward Up
-            if (z + 1 < _zLength && GetNode(x, y + 1, z + 1) != null)
+            if (y + 1 < _yLength && GetNode(x, y + 1, z + 1) != null)
                 neighborList.Add(GetNode(x, y + 1, z + 1));
 
             // Forward Down
-            if (z > 0 && GetNode(x, y + 1, z - 1) != null)
-                neighborList.Add(GetNode(x, y + 1, z - 1));
+            if (y > 0 && GetNode(x, y - 1, z + 1) != null)
+                neighborList.Add(GetNode(x, y - 1, z + 1));
 
         }
 
         // Backward Nodes
-        if (y > 0) {
+        if (z > 0) {
 
             // Backward
-            if (GetNode(x, y - 1, z) != null)
-                neighborList.Add(GetNode(x, y - 1, z));
+            if (GetNode(x, y, z - 1) != null)
+                neighborList.Add(GetNode(x, y, z - 1));
 
             // Backward Up
-            if (z + 1 < _zLength && GetNode(x, y - 1, z + 1) != null)
-                neighborList.Add(GetNode(x, y - 1, z + 1));
+            if (y + 1 < _yLength && GetNode(x, y + 1, z - 1) != null)
+                neighborList.Add(GetNode(x, y + 1, z - 1));
 
             // Backward Down
-            if (z > 0 && GetNode(x, y - 1, z - 1) != null)
+            if (y > 0 && GetNode(x, y - 1, z - 1) != null)
                 neighborList.Add(GetNode(x, y - 1, z - 1));
 
         }
