@@ -11,9 +11,10 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private Transform _t;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Renderer _r;
+    private bool _grounded;
+    private float _distToGround;
     private Material _m;
     private bool _pathing;
-    private List<Vector3> _path;
 
     // Getters and Setters
     public Transform Transform {
@@ -28,12 +29,12 @@ public class RAgent : MonoBehaviour {
         get { return _m; }
         private set {}
     }
-    public bool Pathing {
-        get { return _pathing; }
-        set { _pathing = value; }
+    public bool Grounded {
+        get { return _grounded; }
+        private set {}
     }
-    public List<Vector3> Path {
-        get { return _path; }
+    public bool Pathing {
+        get { return _state is RAgentStatePathing; }
         private set {}
     }
 
@@ -60,6 +61,9 @@ public class RAgent : MonoBehaviour {
         // Set Reference Variables
         _m = _r.material;
 
+        // Set RAgent Variables
+        _distToGround = 0.13f;
+
         // Set State Variables
         _stateFactory = new RAgentStateFactory(this);
         _state = _stateFactory.Idle();
@@ -68,12 +72,22 @@ public class RAgent : MonoBehaviour {
     }
 
     private void Update() {
+
+        // State Functions
         _state.UpdateStates();
         _state.CheckSwitchStates();
+
     }
 
     private void FixedUpdate() {
+
+        // State Functions
         _state.FixedUpdateStates();
+
+        // Ground check
+        _grounded = Physics.Raycast(_t.position,
+            Vector3.down, _distToGround);
+
     }
 
     #endregion
@@ -82,8 +96,7 @@ public class RAgent : MonoBehaviour {
 
     // Follow Path
     public void FollowPath(List<Vector3> path) {
-        _path = path;
-        _pathing = true;
+        _state.SwitchState(_state.Factory.Pathing(path));
     }
 
     #endregion

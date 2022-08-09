@@ -58,6 +58,14 @@ public abstract class RAgentState {
         get { return _stateFactory; }
         private set {}
     }
+    public RAgentState CurrentSubState {
+        get { return _currentSubState; }
+        private set {}
+    }
+    public RAgentState CurrentSuperState {
+        get { return _currentSuperState; }
+        private set {}
+    }
     
     #endregion
 

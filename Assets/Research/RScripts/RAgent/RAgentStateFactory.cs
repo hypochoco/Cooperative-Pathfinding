@@ -29,8 +29,18 @@ public class RAgentStateFactory {
     }
 
     // Pathing State
-    public RAgentState Pathing() {
-        return new RAgentStatePathing(_stateMachine, this);
+    public RAgentState Pathing(List<Vector3> path) {
+        return new RAgentStatePathing(_stateMachine, this, path);
+    }
+
+    // Pathing Grounded Sub State
+    public RAgentState PathingGrounded() {
+        return new RAgentStatePathingGrounded(_stateMachine, this);
+    }
+
+    // Pathing Jump Sub State
+    public RAgentState PathingJump() {
+        return new RAgentStatePathingJump(_stateMachine, this);
     }
 
     #endregion

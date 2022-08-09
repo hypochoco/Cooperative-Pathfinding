@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RAgentStateIdle : RAgentState {
+public class RAgentStatePathingGrounded : RAgentState {
 
     #region State Variables
 
@@ -11,12 +11,9 @@ public class RAgentStateIdle : RAgentState {
     #region Constructor
 
     // Constructor
-    public RAgentStateIdle(RAgent _stateMachine, 
+    public RAgentStatePathingGrounded(RAgent _stateMachine, 
         RAgentStateFactory _stateFactory) : 
-        base (_stateMachine, _stateFactory) {
-        
-        RootState = true;
-    }
+        base (_stateMachine, _stateFactory) {}
     
     #endregion
 
@@ -24,17 +21,23 @@ public class RAgentStateIdle : RAgentState {
 
     public override void EnterState() {
 
-        // Change Color
-        Ctx.Material.color = Color.white;
+        // Testing Purposes
+        Ctx.Material.color = Color.green;
+
+        // Jump
+        Ctx.Rigidbody.AddRelativeForce(100 * new Vector3(0f, 1f, 0.5f));
+        SwitchState(Factory.PathingJump());
 
     }
-
     public override void UpdateState() {}
+
     public override void CheckSwitchState() {}
+
     public override void FixedUpdateState() {}
+
     public override void InitializeSubState() {}
     public override void ExitState() {}
 
     #endregion
-    
+
 }
