@@ -4,6 +4,13 @@ using UnityEngine;
 
 // RAgent
 public class RAgent : MonoBehaviour {
+
+
+    // Testing Purposes
+    public Vector3 test;
+
+
+
     
     #region RAgent Variables
 

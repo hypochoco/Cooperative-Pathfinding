@@ -8,6 +8,10 @@ public class RAgentStatePathingGrounded : RAgentState {
 
     // State Variables
     private RAgentStatePathing _ctx;
+    private Transform _t;
+    private Rigidbody _rb;
+    private float _jumptTime;
+    private Vector3 _jumpVelocity;
     private float _delay;
 
     #endregion
@@ -29,17 +33,13 @@ public class RAgentStatePathingGrounded : RAgentState {
     public override void EnterState() {
 
         // State Variables
+        _t = Ctx.Transform;
+        _rb = Ctx.Rigidbody;
+        _jumptTime = 0.125f;
         _delay = _ctx.Delay;
 
-        // Direction
-        Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
-            Ctx.Transform.position;
-
-        // Look at initial point
-        Quaternion targetRotation = 
-            Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
-        Ctx.Transform.rotation = Quaternion.Lerp(Ctx.Transform.rotation, 
-            targetRotation, 100);
+        // Calculates Jump        
+        CalculateJump();
 
     }
     public override void UpdateState() {
@@ -50,36 +50,50 @@ public class RAgentStatePathingGrounded : RAgentState {
             return;
         }
 
-        // Direction
-        Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
-            Ctx.Transform.position;
-
-        // Look at next point
-        Quaternion targetRotation = 
-            Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
-        Ctx.Transform.rotation = Quaternion.Lerp(Ctx.Transform.rotation, 
-            targetRotation, Time.deltaTime * _ctx.TurnSpeed);
-
-        // Adujust jump height
-        float jumpMultiplier = 1f;
-        if (dir.y > 0.1f)
-            jumpMultiplier = 2f;
-
-        // Adjust jump distance
-        float distanceMultiplier = 1f;
-        // if ((new Vector3(dir.x, 0 , dir.z)).sqrMagnitude < 0.25f)
-        //     distanceMultiplier = 0.5f + (new Vector3(dir.x, 0 , dir.z)).sqrMagnitude;
-
-        // Jump
-        Ctx.Rigidbody.AddRelativeForce(_ctx.MovementSpeed * 
-            new Vector3(0f, jumpMultiplier, distanceMultiplier));
-        SwitchState(Factory.PathingFalling(_ctx));
+        // Jump Time
+        if (_jumptTime >= 0)
+            _jumptTime -= Time.deltaTime;
 
     }
-    public override void CheckSwitchState() {}
-    public override void FixedUpdateState() {}
+    public override void CheckSwitchState() {
+        
+        // Switch State
+        if (_jumptTime <= 0 && _rb.velocity.y <= 0)
+            SwitchState(Factory.PathingFalling(_ctx));
+    }
+    public override void FixedUpdateState() {
+
+        // Delay
+        if (_delay >= 0) return;
+
+        // Jump Time
+        if (_jumptTime <= 0) return;
+
+        // Jump
+        _rb.velocity += _jumpVelocity * Time.deltaTime;
+        
+    }
     public override void InitializeSubState() {}
     public override void ExitState() {}
+
+    #endregion
+
+    #region Grounded Functions
+
+    public void CalculateJump() {
+
+        // Direction
+        Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
+            _t.position;
+
+        // Look at initial point
+        Quaternion targetRotation = 
+            Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
+        _t.rotation = targetRotation;
+
+        _jumpVelocity = Vector3.zero;
+
+    }
 
     #endregion
 

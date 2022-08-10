@@ -43,8 +43,8 @@ public class RPath {
             Vector2 currentPoint = V3ToV2(_lookPoints[i]);
             Vector2 dirToCurrentPoint = 
                 (currentPoint - previousPoint).normalized;
-            Vector2 turnBoundaryPoint = (i == _finishLineIndex) ? 
-            currentPoint : currentPoint - dirToCurrentPoint * turnDst;
+            Vector2 turnBoundaryPoint = 
+                currentPoint - dirToCurrentPoint * turnDst;
             _turnBoundaries[i] = 
                 new RLine(turnBoundaryPoint, 
                 previousPoint - dirToCurrentPoint * turnDst);

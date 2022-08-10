@@ -9,10 +9,9 @@ public class RAgentStatePathing : RAgentState {
 
     // State Variables
     private float _turnDst;
-    private float _turnSpeed;
-    private float _movementSpeed;
     private float _delay;
     private float _gravMultiplier;
+    private List<Vector3> _rawPath;
     private RPath _path;
     private int _pathIndex;
     private bool _pathing;
@@ -21,14 +20,6 @@ public class RAgentStatePathing : RAgentState {
     // Getters and Setters
     public float TurnDst {
         get { return _turnDst; }
-        private set {}
-    }
-    public float TurnSpeed {
-        get { return _turnSpeed; }
-        private set {}
-    }
-    public float MovementSpeed {
-        get { return _movementSpeed; }
         private set {}
     }
     public float Delay {
@@ -62,7 +53,7 @@ public class RAgentStatePathing : RAgentState {
         base (_stateMachine, _stateFactory) {
         
         RootState = true;
-        _path = new RPath(path, Ctx.Transform.position, _turnDst);
+        _rawPath = path;
 
     }
     
@@ -72,22 +63,23 @@ public class RAgentStatePathing : RAgentState {
 
     public override void EnterState() {
 
-        // Testing Purposes
-        Ctx.DebugPath = _path;
-        Ctx.Material.color = Color.red;
-
         // Set Initial Variables
-        _turnDst = 1f;
-        _turnSpeed = 100f;
-        _movementSpeed = 85f;
+        _turnDst = 0.125f;
         _delay = 0.125f;
         _gravMultiplier = 5f;
         _pathIndex = 0;
         _pathing = true;
 
+        // Create Path
+        _path = new RPath(_rawPath, Ctx.Transform.position, _turnDst);
+
         // Start Pathing
         _startPathing = 
             Ctx.StartCoroutine(StartPathingCoroutine());
+
+        // Testing Purposes
+        Ctx.DebugPath = _path;
+        Ctx.Material.color = Color.red;
 
     }
     public override void UpdateState() {

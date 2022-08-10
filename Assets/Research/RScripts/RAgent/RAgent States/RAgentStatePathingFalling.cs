@@ -37,10 +37,8 @@ public class RAgentStatePathingFalling : RAgentState {
     public override void CheckSwitchState() {
 
         // Better Jump
-        if (Ctx.Rigidbody.velocity.y < 0) {
-            Ctx.Rigidbody.velocity += _ctx.GravMultiplier * 
-                Time.deltaTime * Vector3.down;
-        }
+        Ctx.Rigidbody.velocity += _ctx.GravMultiplier * 
+            Time.deltaTime * Vector3.down;
 
         // Delay
         if (_delay >= 0) {
