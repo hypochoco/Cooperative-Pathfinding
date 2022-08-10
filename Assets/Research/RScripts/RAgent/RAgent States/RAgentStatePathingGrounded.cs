@@ -29,15 +29,17 @@ public class RAgentStatePathingGrounded : RAgentState {
     public override void EnterState() {
 
         // State Variables
-        _delay = 0.125f;
+        _delay = _ctx.Delay;
+
+        // Direction
+        Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
+            Ctx.Transform.position;
 
         // Look at initial point
         Quaternion targetRotation = 
-            Quaternion.LookRotation(_ctx.Path.LookPoints[_ctx.PathIndex] - 
-            Ctx.Transform.position);
-        targetRotation.x = 0;
-        targetRotation.z = 0;
-        Ctx.Transform.rotation = targetRotation;
+            Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
+        Ctx.Transform.rotation = Quaternion.Lerp(Ctx.Transform.rotation, 
+            targetRotation, 100);
 
     }
     public override void UpdateState() {
@@ -48,17 +50,29 @@ public class RAgentStatePathingGrounded : RAgentState {
             return;
         }
 
+        // Direction
+        Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
+            Ctx.Transform.position;
+
         // Look at next point
         Quaternion targetRotation = 
-            Quaternion.LookRotation(_ctx.Path.LookPoints[_ctx.PathIndex] - 
-            Ctx.Transform.position);
-        targetRotation.x = 0;
-        targetRotation.z = 0;
+            Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
         Ctx.Transform.rotation = Quaternion.Lerp(Ctx.Transform.rotation, 
             targetRotation, Time.deltaTime * _ctx.TurnSpeed);
 
+        // Adujust jump height
+        float jumpMultiplier = 1f;
+        if (dir.y > 0.1f)
+            jumpMultiplier = 2f;
+
+        // Adjust jump distance
+        float distanceMultiplier = 1f;
+        // if ((new Vector3(dir.x, 0 , dir.z)).sqrMagnitude < 0.25f)
+        //     distanceMultiplier = 0.5f + (new Vector3(dir.x, 0 , dir.z)).sqrMagnitude;
+
         // Jump
-        Ctx.Rigidbody.AddRelativeForce(_ctx.MovementSpeed * new Vector3(0f, 1f, 0.5f));
+        Ctx.Rigidbody.AddRelativeForce(_ctx.MovementSpeed * 
+            new Vector3(0f, jumpMultiplier, distanceMultiplier));
         SwitchState(Factory.PathingFalling(_ctx));
 
     }

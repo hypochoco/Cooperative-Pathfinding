@@ -12,6 +12,12 @@ public class RGridConstructor : MonoBehaviour {
     // Grid Constructor Variables
     private RGrid<RGridNode> _grid; 
 
+    // Getters and Setters
+    public RGrid<RGridNode> Grid {
+        get { return _grid; }
+        private set {}
+    }
+
     #endregion
 
     #region Unity Functions

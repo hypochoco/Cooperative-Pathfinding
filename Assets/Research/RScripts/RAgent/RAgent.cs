@@ -85,8 +85,9 @@ public class RAgent : MonoBehaviour {
         _state.FixedUpdateStates();
 
         // Ground check
-        _grounded = Physics.Raycast(_t.position,
-            Vector3.down, _distToGround);
+        _grounded = (Physics.Raycast(_t.position,
+            Vector3.down, _distToGround) || 
+            _rb.velocity.y == 0f);
 
     }
 

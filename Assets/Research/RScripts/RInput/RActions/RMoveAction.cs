@@ -33,6 +33,9 @@ public class RMoveAction : RAction {
         _actionCompleted = true;
     }
 
+    // Update Action
+    public void UpdateAction() {}
+
     #endregion
 
 }

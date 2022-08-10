@@ -139,7 +139,7 @@ public class RGrid<T> {
     }
 
     // Find and return list of neighboring nodes
-    private List<T> GetNeighbors(int x, int y, int z) {
+    public List<T> GetNeighbors(int x, int y, int z) {
 
         // Neighbor List
         List<T> neighborList = new List<T>();

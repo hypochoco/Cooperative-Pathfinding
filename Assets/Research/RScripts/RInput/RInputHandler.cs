@@ -21,6 +21,7 @@ public class RInputHandler : MonoBehaviour {
 
     // Input Handler Variables
     [SerializeField] private bool _actionCompleted;
+    private RAction _currentAction;
     private Queue<RAction> _queue;
 
     #endregion
@@ -39,11 +40,16 @@ public class RInputHandler : MonoBehaviour {
 
     private void Update() {
 
-        // Queue Actions
+        // Enqueue Action
         EnqueueAction();
 
-        // Dequeue Actions
+        // Dequeue Action
         DequeueAction();
+
+        // UpdateAction
+        if (_currentAction != null)
+            _currentAction.UpdateAction();
+
 
     }
 
@@ -104,17 +110,20 @@ public class RInputHandler : MonoBehaviour {
     // Dequeue and Run Actions
     private void DequeueAction() {
 
+        // Ensure the previous action has been completed
+        if (!_actionCompleted) {
+            return;
+        } else {
+            _currentAction = null;
+        }
+
         // Ensure actions exist in queue
         if (_queue.Count <= 0)
             return;
 
-        // Ensure the previous action has been completed
-        if (!_actionCompleted)
-            return;
-
         // Dequeue and start action
-        RAction action = _queue.Dequeue();
-        action.StartAction();
+        _currentAction = _queue.Dequeue();
+        _currentAction.StartAction();
 
     }
 
