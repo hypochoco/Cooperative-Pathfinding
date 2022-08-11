@@ -4,13 +4,6 @@ using UnityEngine;
 
 // RAgent
 public class RAgent : MonoBehaviour {
-
-
-    // Testing Purposes
-    public Vector3 test;
-
-
-
     
     #region RAgent Variables
 
@@ -92,9 +85,7 @@ public class RAgent : MonoBehaviour {
         _state.FixedUpdateStates();
 
         // Ground check
-        _grounded = (Physics.Raycast(_t.position,
-            Vector3.down, _distToGround) || 
-            _rb.velocity.y == 0f);
+        _grounded = GroundCheck();
 
     }
 
@@ -105,6 +96,39 @@ public class RAgent : MonoBehaviour {
     // Follow Path
     public void FollowPath(List<Vector3> path) {
         _state.SwitchState(_state.Factory.Pathing(path));
+    }
+
+    // Groung Check
+    public bool GroundCheck() {
+
+        // Current Position
+        Vector3 _pos = _t.position;
+
+        // Center of RAgent
+        if (Physics.Raycast(_pos, Vector3.down, _distToGround))
+            return true;
+
+        // Forward Left
+        Vector2 _perp2D = Vector2.
+            Perpendicular(new Vector2(_pos.x, _pos.z));
+        Vector3 _perp = new Vector3(_perp2D.x, 0, _perp2D.y);
+        if (Physics.Raycast(_pos + _perp, Vector3.down, _distToGround))
+            return true;
+
+        // Foward Right
+        if (Physics.Raycast(_pos - _perp, Vector3.down, _distToGround))
+            return true;
+
+        // Backward Left
+        if (Physics.Raycast(-_pos + _perp, Vector3.down, _distToGround))
+            return true;
+
+        // Backward Right
+        if (Physics.Raycast(-_pos - _perp, Vector3.down, _distToGround))
+            return true;
+
+        return false;
+
     }
 
     #endregion

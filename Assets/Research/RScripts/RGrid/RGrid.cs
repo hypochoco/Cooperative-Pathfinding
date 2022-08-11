@@ -10,6 +10,7 @@ public class RGrid<T> {
 
     // Grid Variables
     private float _cellSize;
+    private float _cellSizeY;
     private T[,,] _grid;
     private int _count;
     private int _xLength;
@@ -19,6 +20,10 @@ public class RGrid<T> {
     // Getters and Setters
     public float CellSize {
         get { return _cellSize; }
+        private set {}
+    }
+    public float CellSizeY {
+        get { return _cellSizeY; }
         private set {}
     }
     public int Count {
@@ -35,7 +40,7 @@ public class RGrid<T> {
     #region Constructor
 
     // Constructor
-    public RGrid(float cellSize) {
+    public RGrid(float cellSize, float cellSizeY) {
 
         // Initial grid size
         int size = 1;
@@ -45,6 +50,7 @@ public class RGrid<T> {
 
         // Cell Size
         _cellSize = cellSize;
+        _cellSizeY = cellSizeY;
 
         // Count
         _count = 0;
@@ -116,15 +122,16 @@ public class RGrid<T> {
 
     // Convert world position into a grid position
     public (int, int, int) GetCoord(Vector3 worldPosition) {
-        int outX = Mathf.FloorToInt(worldPosition.x / CellSize);
-        int outY = Mathf.FloorToInt(worldPosition.y / CellSize);
-        int outZ = Mathf.FloorToInt(worldPosition.z / CellSize);
+        int outX = Mathf.FloorToInt(worldPosition.x / _cellSize);
+        int outY = Mathf.FloorToInt(worldPosition.y / _cellSizeY);
+        int outZ = Mathf.FloorToInt(worldPosition.z / _cellSize);
         return (outX, outY, outZ);
     }
 
     // Convert a grid position into world position
     public Vector3 GetWorld(int x, int y, int z) {
-        return new Vector3(x, y, z) * CellSize;
+        return new Vector3(x * _cellSize, 
+            y * _cellSizeY, z * _cellSize);
     }
 
     // Obtain a grid item

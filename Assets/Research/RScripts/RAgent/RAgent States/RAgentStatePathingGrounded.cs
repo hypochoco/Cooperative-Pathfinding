@@ -10,9 +10,13 @@ public class RAgentStatePathingGrounded : RAgentState {
     private RAgentStatePathing _ctx;
     private Transform _t;
     private Rigidbody _rb;
+    private Vector3 _dir;
     private bool _jumped;
     private Vector3 _jumpVelocity;
     private float _delay;
+
+    // Testing Purposes
+    private float _timer;
 
     #endregion
 
@@ -38,22 +42,24 @@ public class RAgentStatePathingGrounded : RAgentState {
         _delay = _ctx.Delay;
 
         // Direction
-        Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
+        _dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
             _t.position;
 
         // Look at initial point
         Quaternion targetRotation = 
-            Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
+            Quaternion.LookRotation(new Vector3(_dir.x, 0, _dir.z));
         _t.rotation = targetRotation;
 
+        Debug.Log(_dir.y);
 
-        // Testing Purposes
-        if (Ctx.test != null)
-            Debug.Log((_t.position - Ctx.test).magnitude);
-        Ctx.test = _t.position;
+        // Jump Calculation
+        _jumpVelocity = new Vector3(0, (_dir.y < 0f)? 1.25f : 3f, 1f);
 
     }
     public override void UpdateState() {
+
+        // Testing Purposes
+        _timer += Time.deltaTime;
 
         // Delay
         if (_delay > 0)
@@ -75,10 +81,10 @@ public class RAgentStatePathingGrounded : RAgentState {
         // Jump
         if (!_jumped) {
             _jumped = true;
-            _rb.AddRelativeForce(new Vector3(0, 1.25f, 1f), 
+            _rb.AddRelativeForce(_jumpVelocity, 
                 ForceMode.Impulse);
         }
-        
+
     }
     public override void InitializeSubState() {}
     public override void ExitState() {}

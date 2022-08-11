@@ -56,14 +56,11 @@ public class RLine {
     #region Debug
 
 	// Testing purposes
-    public void OnDrawGizmos() {
-		DrawWithGizmos(2f);
-	}
-	public void DrawWithGizmos(float length) {
+	public void DrawWithGizmos(float length, float yPos) {
 		Gizmos.color = Color.black;
 		Vector3 lineDir = new Vector3(1, 0, _gradient).normalized;
 		Vector3 lineCenter = 
-        new Vector3(_pointOnLine_1.x, 0, _pointOnLine_1.y) + 0.1f * Vector3.up;
+        new Vector3(_pointOnLine_1.x, yPos, _pointOnLine_1.y) + 0.1f * Vector3.up;
 		Gizmos.DrawLine(lineCenter - lineDir * length / 2f, 
             lineCenter + lineDir * length / 2f);
 	}

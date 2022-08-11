@@ -29,9 +29,10 @@ public class RGridPreset {
         
         // intial variables
         float cellSize = 0.5f;
+        float cellSizeY = 0.25f;
 
         // create a grid
-        RGrid<RGridNode> grid = new RGrid<RGridNode>(cellSize);
+        RGrid<RGridNode> grid = new RGrid<RGridNode>(cellSize, cellSizeY);
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -43,6 +44,10 @@ public class RGridPreset {
         // Manual Grid Additions
         RGridNode test0 = new RGridNode(10, 1, 5);
         grid.Add(test0.x, test0.y, test0.z, test0);
+
+        // Manual Grid Additions
+        RGridNode test1 = new RGridNode(11, 2, 5);
+        grid.Add(test1.x, test1.y, test1.z, test1);
 
         // Return Preset
         return grid;

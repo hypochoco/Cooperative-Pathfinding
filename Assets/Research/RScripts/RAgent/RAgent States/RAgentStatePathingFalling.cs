@@ -8,7 +8,6 @@ public class RAgentStatePathingFalling : RAgentState {
 
     // State Variables
     private RAgentStatePathing _ctx;
-    private float _delay;
 
     #endregion
 
@@ -26,38 +25,26 @@ public class RAgentStatePathingFalling : RAgentState {
 
     #region State Functions
 
-    public override void EnterState() {
-
-        // State Variables
-        _delay = _ctx.Delay;
-
-    }
-
+    public override void EnterState() {}
     public override void UpdateState() {}
     public override void CheckSwitchState() {
-
-        // Better Jump
-        Ctx.Rigidbody.velocity += _ctx.GravMultiplier * 
-            Time.deltaTime * Vector3.down;
-
-        // Delay
-        if (_delay >= 0) {
-            _delay -= Time.deltaTime;
-            return;
-        }
         
         // If grounded
         if (Ctx.Grounded) {
-            if (!_ctx.Pathing) {
-                SwitchState(Factory.Idle());
-            } else {
+            if (_ctx.Pathing) {
                 SwitchState(Factory.PathingGrounded(_ctx));
+            } else {
+                SwitchState(Factory.Idle());
             }            
         }
 
     }
+    public override void FixedUpdateState() {
 
-    public override void FixedUpdateState() {}
+        // Better Jump        
+        Ctx.Rigidbody.AddForce(_ctx.GravMultiplier * Vector3.down);
+
+    }
     public override void InitializeSubState() {}
     public override void ExitState() {}
 

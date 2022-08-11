@@ -68,11 +68,9 @@ public class RPath {
     // Testing Purposes
     public void DrawWithGizmos() {
         Gizmos.color = Color.black;
-        foreach (Vector3 p in _lookPoints) {
-            Gizmos.DrawCube(p, 0.1f * Vector3.one);
-        }
-        foreach (RLine l in _turnBoundaries) {
-            l.DrawWithGizmos(1f);
+        for (int i = 0; i < _lookPoints.Length; i++) {
+            Gizmos.DrawCube(_lookPoints[i], 0.1f * Vector3.one);
+            _turnBoundaries[i].DrawWithGizmos(1f, _lookPoints[i].y);
         }
     }
 

@@ -39,11 +39,13 @@ public class RPathHandler : MonoBehaviour {
         (int x1, int y1, int z1) = _grid.GetCoord(targetPoint);
 
         // Find Path
-        List<RGridNode> pathNodes = _pf.FindPath(agent, x0, y0, z0, x1, y1 + 1, z1);
+        List<RGridNode> pathNodes = _pf.FindPath(agent, x0, y0, z0, 
+            x1, (y1 < 0)? 0 : y1, z1);
 
         // Ensure path exists
         if (pathNodes == null) {
             Debug.Log("path not found!");
+            Debug.Log(_grid.GetCoord(targetPoint));
             return;
         }
 
