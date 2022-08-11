@@ -35,7 +35,7 @@ public class RPathHandler : MonoBehaviour {
         RAgent agent = _agentList[0];
 
         // Calcualte start and end points
-        (int x0, int y0, int z0) = _grid.GetCoord(Vector3.zero);
+        (int x0, int y0, int z0) = _grid.GetCoord(agent.transform.position);
         (int x1, int y1, int z1) = _grid.GetCoord(targetPoint);
 
         // Find Path

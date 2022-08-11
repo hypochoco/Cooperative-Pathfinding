@@ -50,8 +50,6 @@ public class RAgentStatePathingGrounded : RAgentState {
             Quaternion.LookRotation(new Vector3(_dir.x, 0, _dir.z));
         _t.rotation = targetRotation;
 
-        Debug.Log(_dir.y);
-
         // Jump Calculation
         _jumpVelocity = new Vector3(0, (_dir.y < 0f)? 1.25f : 3f, 1f);
 
