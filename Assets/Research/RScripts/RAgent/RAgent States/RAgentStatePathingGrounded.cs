@@ -10,7 +10,7 @@ public class RAgentStatePathingGrounded : RAgentState {
     private RAgentStatePathing _ctx;
     private Transform _t;
     private Rigidbody _rb;
-    private float _jumptTime;
+    private bool _jumped;
     private Vector3 _jumpVelocity;
     private float _delay;
 
@@ -35,52 +35,7 @@ public class RAgentStatePathingGrounded : RAgentState {
         // State Variables
         _t = Ctx.Transform;
         _rb = Ctx.Rigidbody;
-        _jumptTime = 0.125f;
         _delay = _ctx.Delay;
-
-        // Calculates Jump        
-        CalculateJump();
-
-    }
-    public override void UpdateState() {
-
-        // Delay
-        if (_delay >= 0) {
-            _delay -= Time.deltaTime;
-            return;
-        }
-
-        // Jump Time
-        if (_jumptTime >= 0)
-            _jumptTime -= Time.deltaTime;
-
-    }
-    public override void CheckSwitchState() {
-        
-        // Switch State
-        if (_jumptTime <= 0 && _rb.velocity.y <= 0)
-            SwitchState(Factory.PathingFalling(_ctx));
-    }
-    public override void FixedUpdateState() {
-
-        // Delay
-        if (_delay >= 0) return;
-
-        // Jump Time
-        if (_jumptTime <= 0) return;
-
-        // Jump
-        _rb.velocity += _jumpVelocity * Time.deltaTime;
-        
-    }
-    public override void InitializeSubState() {}
-    public override void ExitState() {}
-
-    #endregion
-
-    #region Grounded Functions
-
-    public void CalculateJump() {
 
         // Direction
         Vector3 dir = _ctx.Path.LookPoints[_ctx.PathIndex] - 
@@ -91,9 +46,42 @@ public class RAgentStatePathingGrounded : RAgentState {
             Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
         _t.rotation = targetRotation;
 
-        _jumpVelocity = Vector3.zero;
+
+        // Testing Purposes
+        if (Ctx.test != null)
+            Debug.Log((_t.position - Ctx.test).magnitude);
+        Ctx.test = _t.position;
 
     }
+    public override void UpdateState() {
+
+        // Delay
+        if (_delay > 0)
+            _delay -= Time.deltaTime;
+
+    }
+    public override void CheckSwitchState() {
+        
+        // Switch State
+        if (!Ctx.Grounded && _rb.velocity.y <= 0)
+            SwitchState(Factory.PathingFalling(_ctx));
+            
+    }
+    public override void FixedUpdateState() {
+
+        // Delay
+        if (_delay > 0) return;
+
+        // Jump
+        if (!_jumped) {
+            _jumped = true;
+            _rb.AddRelativeForce(new Vector3(0, 1.25f, 1f), 
+                ForceMode.Impulse);
+        }
+        
+    }
+    public override void InitializeSubState() {}
+    public override void ExitState() {}
 
     #endregion
 

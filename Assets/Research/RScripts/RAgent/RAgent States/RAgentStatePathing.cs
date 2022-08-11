@@ -18,10 +18,6 @@ public class RAgentStatePathing : RAgentState {
     private Coroutine _startPathing;
 
     // Getters and Setters
-    public float TurnDst {
-        get { return _turnDst; }
-        private set {}
-    }
     public float Delay {
         get { return _delay; }
         private set {}
