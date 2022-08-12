@@ -34,7 +34,7 @@ public class RAgentStatePathingFalling : RAgentState {
             if (_ctx.Pathing) {
                 SwitchState(Factory.PathingGrounded(_ctx));
             } else {
-                SwitchState(Factory.Idle());
+                Ctx.State.SwitchState(Factory.Idle());
             }            
         }
 

@@ -14,7 +14,7 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private bool _grounded;
     private float _distToGround;
     private Material _m;
-    private bool _pathing;
+    private Vector3 _goal;
 
     // Getters and Setters
     public Transform Transform {
@@ -33,8 +33,19 @@ public class RAgent : MonoBehaviour {
         get { return _grounded; }
         private set {}
     }
-    public bool Pathing {
-        get { return _state is RAgentStatePathing; }
+    public Vector3 Goal {
+        get { return _goal; }
+        set { _goal = value; }
+    }
+    public bool GoalReached {
+        get {
+            if (_goal == null) {
+                return false;
+            } else if ((_t.position - _goal).sqrMagnitude > 1f) {
+                return false;
+            }
+            return true;
+        }
         private set {}
     }
 
@@ -48,6 +59,10 @@ public class RAgent : MonoBehaviour {
     public RAgentState State {
         get { return _state; }
         set { _state = value; }
+    }
+    public bool Pathing {
+        get { return _state is RAgentStatePathing; }
+        private set {}
     }
 
     #endregion
@@ -72,6 +87,8 @@ public class RAgent : MonoBehaviour {
     }
 
     private void Update() {
+
+        Debug.Log(_state);
 
         // State Functions
         _state.UpdateStates();

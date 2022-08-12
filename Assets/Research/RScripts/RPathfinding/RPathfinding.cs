@@ -47,7 +47,7 @@ public class RPathfinding {
     }
 
     // Calculate Path
-    public List<RGridNode> CalculatePath(RAgent agent, RGridNode endNode) {
+    public List<RGridNode> CalculatePath(RGridNode endNode) {
 
         // Path
         List<RGridNode> path = new List<RGridNode>();
@@ -68,7 +68,7 @@ public class RPathfinding {
     }
 
     // FindPath
-    public List<RGridNode> FindPath(RAgent agent, int startX, int startY, int startZ,
+    public List<RGridNode> FindPath(int startX, int startY, int startZ,
         int endX, int endY, int endZ) {
         
         // Initialize Start and End Nodes
@@ -114,7 +114,7 @@ public class RPathfinding {
 
             // Check if endNode reached
             if (currentNode == endNode)
-                return CalculatePath(agent, endNode);
+                return CalculatePath(endNode);
 
             // Add processed node to closedList
             _closedList.Add(currentNode);

@@ -12,6 +12,7 @@ public class RGrid<T> {
     private float _cellSize;
     private float _cellSizeY;
     private T[,,] _grid;
+    private RResTable<T> _resTable;
     private int _count;
     private int _xLength;
     private int _yLength;
@@ -32,6 +33,10 @@ public class RGrid<T> {
     }
     public T[,,] Array {
         get { return _grid; }
+        private set {}
+    }
+    public RResTable<T> RResTable {
+        get { return _resTable; }
         private set {}
     }
 
@@ -57,6 +62,9 @@ public class RGrid<T> {
 
         // Empty Grid
         _grid = new T[size, size, size];
+
+        // ResTable
+        _resTable = new RResTable<T>();
 
     }
 
@@ -232,6 +240,13 @@ public class RGrid<T> {
             if (y > 0 && GetGridItem(x, y - 1, z - 1) != null)
                 neighborList.Add(GetGridItem(x, y - 1, z - 1));
 
+        }
+
+        // TEMP:
+        List<T> resList = new List<T>();
+        foreach (var node in neighborList) {
+            if (!_resTable.Reserved(node))
+                resList.Add(node);
         }
 
         // Return neighbor list
