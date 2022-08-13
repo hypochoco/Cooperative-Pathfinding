@@ -11,8 +11,10 @@ public class RAgentStatePathing : RAgentState {
     private float _turnDst;
     private float _delay;
     private float _gravMultiplier;
-    private List<Vector3> _rawPath;
-    private RPath _path;
+    private RGrid<RGridNode> _grid;
+    private List<RGridNode> _gridPath;
+    private List<Vector3> _vectorPath;
+    private RPath _smoothPath;
     private int _pathIndex;
     private bool _pathing;
     private Coroutine _startPathing;
@@ -26,8 +28,16 @@ public class RAgentStatePathing : RAgentState {
         get { return _gravMultiplier; }
         private set {}
     }
+    public List<RGridNode> GridPath {
+        get { return _gridPath; }
+        private set {}
+    }
+    public List<Vector3> VectorPath {
+        get { return _vectorPath; }
+        private set {}
+    }
     public RPath Path {
-        get { return _path; }
+        get { return _smoothPath; }
         private set {}
     }
     public int PathIndex {
@@ -45,11 +55,11 @@ public class RAgentStatePathing : RAgentState {
 
     // Constructor
     public RAgentStatePathing(RAgent _stateMachine, 
-        RAgentStateFactory _stateFactory, List<Vector3> path) : 
+        RAgentStateFactory _stateFactory, List<RGridNode> path) : 
         base (_stateMachine, _stateFactory) {
         
         RootState = true;
-        _rawPath = path;
+        _gridPath = path;
 
     }
     
@@ -65,16 +75,20 @@ public class RAgentStatePathing : RAgentState {
         _gravMultiplier = 5f;
         _pathIndex = 0;
         _pathing = true;
+        _grid = Ctx.Grid;
 
         // Create Path
-        _path = new RPath(_rawPath, Ctx.Transform.position, _turnDst);
+        _vectorPath = new List<Vector3>();
+        foreach(var node in _gridPath)
+            _vectorPath.Add(_grid.GetWorld(node.x, node.y, node.z));
+        _smoothPath = new RPath(_vectorPath, Ctx.Transform.position, _turnDst);
 
         // Start Pathing
         _startPathing = 
             Ctx.StartCoroutine(StartPathingCoroutine());
 
         // Testing Purposes
-        Ctx.DebugPath = _path;
+        Ctx.DebugPath = _smoothPath;
         Ctx.Material.color = Color.red;
 
     }
@@ -83,8 +97,8 @@ public class RAgentStatePathing : RAgentState {
         // Increase pathIndex
         Vector2 pos2D = 
             new Vector2(Ctx.Transform.position.x, Ctx.Transform.position.z);
-        while (_path.TurnBoundaries[_pathIndex].HasCrossedLine(pos2D)) {
-            if (_pathIndex == _path.FinishLineIndex) {
+        while (_smoothPath.TurnBoundaries[_pathIndex].HasCrossedLine(pos2D)) {
+            if (_pathIndex == _smoothPath.FinishLineIndex) {
                 _pathing = false;
                 return;
             } else {

@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RPathRequestHandler : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class RPathRequestHandler : MonoBehaviour {
+    
+
+    #region  RPathRequestHandler Functions
+
+    public void RequstPath(RAgent agent) {
+
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    #endregion
 }

@@ -29,7 +29,7 @@ public class RAgentStateFactory {
     }
 
     // Pathing State
-    public RAgentState Pathing(List<Vector3> path) {
+    public RAgentState Pathing(List<RGridNode> path) {
         return new RAgentStatePathing(_stateMachine, this, path);
     }
 
