@@ -22,7 +22,7 @@ public class RGridConstructor : MonoBehaviour {
 
     #region Unity Functions
 
-    private void Start() {
+    private void Awake() {
 
         // Initialize Grid
         RGridPreset gridPreset = new RGridPreset();

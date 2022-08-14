@@ -11,8 +11,6 @@ public class RAgentStatePathing : RAgentState {
     private float _turnDst;
     private float _delay;
     private float _gravMultiplier;
-    private RGrid<RGridNode> _grid;
-    private List<RGridNode> _gridPath;
     private List<Vector3> _vectorPath;
     private RPath _smoothPath;
     private int _pathIndex;
@@ -26,10 +24,6 @@ public class RAgentStatePathing : RAgentState {
     }
     public float GravMultiplier {
         get { return _gravMultiplier; }
-        private set {}
-    }
-    public List<RGridNode> GridPath {
-        get { return _gridPath; }
         private set {}
     }
     public List<Vector3> VectorPath {
@@ -55,11 +49,11 @@ public class RAgentStatePathing : RAgentState {
 
     // Constructor
     public RAgentStatePathing(RAgent _stateMachine, 
-        RAgentStateFactory _stateFactory, List<RGridNode> path) : 
+        RAgentStateFactory _stateFactory, List<Vector3> path) : 
         base (_stateMachine, _stateFactory) {
         
         RootState = true;
-        _gridPath = path;
+        _vectorPath = path;
 
     }
     
@@ -75,12 +69,8 @@ public class RAgentStatePathing : RAgentState {
         _gravMultiplier = 5f;
         _pathIndex = 0;
         _pathing = true;
-        _grid = Ctx.Grid;
 
         // Create Path
-        _vectorPath = new List<Vector3>();
-        foreach(var node in _gridPath)
-            _vectorPath.Add(_grid.GetWorld(node.x, node.y, node.z));
         _smoothPath = new RPath(_vectorPath, Ctx.Transform.position, _turnDst);
 
         // Start Pathing

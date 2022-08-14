@@ -68,7 +68,7 @@ public class RPathfinding {
     }
 
     // FindPath
-    public List<RGridNode> FindPath(int startX, int startY, int startZ,
+    public List<RGridNode> FindPath(RResTable<RGridNode> resTable, int startX, int startY, int startZ,
         int endX, int endY, int endZ) {
         
         // Initialize Start and End Nodes
@@ -122,6 +122,10 @@ public class RPathfinding {
             // Iterate through neighboring nodes
             foreach (RGridNode neighborNode in 
                 _grid.GetNeighbors(currentNode.x, currentNode.y, currentNode.z)) {
+
+                // Stop if reserved
+                if (resTable.Reserved(neighborNode))
+                    continue;
 
                 // Stop if in the closedList
                 if (_closedList.Contains(neighborNode))

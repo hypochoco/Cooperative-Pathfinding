@@ -9,18 +9,16 @@ public class RMoveAction : RAction {
 
     // Action Variables
     private bool _actionCompleted;
-    private RPathHandler _rPathHandler;
-    private Vector3 _targetPoint;
+    private RPathRequestHandler _rPathRequestHandler;
 
     #endregion
 
     #region Constructor
 
     // Constructor
-    public RMoveAction(ref bool actionCompleted, RPathHandler rPathHandler, Vector3 targetPoint) {
+    public RMoveAction(ref bool actionCompleted, RPathRequestHandler rPathRequestHandler) {
         _actionCompleted = actionCompleted;
-        _rPathHandler = rPathHandler;
-        _targetPoint = targetPoint;
+        _rPathRequestHandler = rPathRequestHandler;
     }
 
     #endregion
@@ -29,7 +27,7 @@ public class RMoveAction : RAction {
     
     // Start Action
     public void StartAction() {
-        _rPathHandler.Test(_targetPoint);
+        _rPathRequestHandler.Test();
         _actionCompleted = true;
     }
 

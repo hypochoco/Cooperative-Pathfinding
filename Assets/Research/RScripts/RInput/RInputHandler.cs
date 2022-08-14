@@ -17,7 +17,7 @@ public class RInputHandler : MonoBehaviour {
 
     // Reference Variables
     private Camera _mainCam; 
-    [SerializeField] private RPathHandler _rPathHandler;
+    [SerializeField] private RPathRequestHandler _rPathRequestHandler;
 
     // Input Handler Variables
     [SerializeField] private bool _actionCompleted;
@@ -96,7 +96,7 @@ public class RInputHandler : MonoBehaviour {
             else {
                 if (actionPriority < 1) {
                     actionPriority = 1;
-                    action = new RMoveAction(ref _actionCompleted, _rPathHandler, hit.point);
+                    action = new RMoveAction(ref _actionCompleted, _rPathRequestHandler);
                 }
             }
         }

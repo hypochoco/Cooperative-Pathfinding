@@ -12,12 +12,8 @@ public class RAgent : MonoBehaviour {
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Renderer _r;
     [SerializeField] private bool _grounded;
-    [SerializeField] private RGridConstructor _gridConstructor;
-    private RGrid<RGridNode> _grid;
     private float _distToGround;
     private Material _m;
-    private RGridNode _goal;
-    private bool _goalReached;
 
     // Getters and Setters
     public Transform Transform {
@@ -36,34 +32,12 @@ public class RAgent : MonoBehaviour {
         get { return _grounded; }
         private set {}
     }
-    public RGridNode Goal {
-        get { return _goal; }
-        set { _goal = value; }
-    }
-    public bool GoalReached {
-        get { return _goalReached; }
-        set { _goalReached = value; }
-    }
-    public RGrid<RGridNode> Grid {
-        get { return _grid; }
-        private set {}
-    }
-    public List<RGridNode> Path {
-        get {
-            if (_state is RAgentStatePathing _pathingState) {
-                return _pathingState.GridPath;
-            } else {
-                return null;
-            }
-        }
-        private set {}
-    }
     public int PathIndex {
         get {
             if (_state is RAgentStatePathing _pathingState) {
                 return _pathingState.PathIndex;
             } else {
-                return -1;
+                return 0;
             }
         }
         private set {}
@@ -95,7 +69,6 @@ public class RAgent : MonoBehaviour {
 
         // Set Reference Variables
         _m = _r.material;
-        _grid = _gridConstructor.Grid;
 
         // Set RAgent Variables
         _distToGround = 0.13f;
@@ -108,8 +81,6 @@ public class RAgent : MonoBehaviour {
     }
 
     private void Update() {
-
-        Debug.Log(_state);
 
         // State Functions
         _state.UpdateStates();
@@ -132,7 +103,7 @@ public class RAgent : MonoBehaviour {
     #region RAgent Functions
 
     // Follow Path
-    public void FollowPath(List<RGridNode> path) {
+    public void FollowPath(List<Vector3> path) {
         _state.SwitchState(_state.Factory.Pathing(path));
     }
 

@@ -24,15 +24,6 @@ public class RAgentStateIdle : RAgentState {
 
     public override void EnterState() {
 
-        // Check if Goal has been reached
-        if (Ctx.Goal != null) {
-            RGridNode _n = Ctx.Goal;
-            Vector3 goal = Ctx.Grid.
-                GetWorld(_n.x, _n.y, _n.z);
-            Ctx.GoalReached = 
-                (goal - Ctx.Transform.position).sqrMagnitude < 2.5f;
-        }
-
         // Testing Purposes
         Ctx.Material.color = Color.white;
 
