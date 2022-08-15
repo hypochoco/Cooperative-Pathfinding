@@ -28,18 +28,25 @@ public class RPathRequestHandler : MonoBehaviour {
     private void Update() {
 
         if (Input.GetKeyDown(KeyCode.Q)) {
-            Test(0);
+            TestMove(0);
         }
 
         if (Input.GetKeyDown(KeyCode.W)) {
-            Test(1);
+            TestMove(1);
         }
 
     }
 
-    public void Test() {
-        
+    public void TestMove(int n) {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray.origin, ray.direction, 
+            out RaycastHit hit, Mathf.Infinity)) {
+            
+            RequestPath(_agentList[n], hit.point);
+        }
     }
+
+    public void Test() {}
 
     // Testing Pathfinding
     public void Test(int n) {

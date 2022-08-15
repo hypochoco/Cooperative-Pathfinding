@@ -122,9 +122,9 @@ public class RGrid<T> {
 
     // Convert world position into a grid position
     public (int, int, int) GetCoord(Vector3 worldPosition) {
-        int outX = Mathf.FloorToInt(worldPosition.x / _cellSize);
-        int outY = Mathf.FloorToInt(worldPosition.y / _cellSizeY);
-        int outZ = Mathf.FloorToInt(worldPosition.z / _cellSize);
+        int outX = Mathf.RoundToInt(worldPosition.x / _cellSize);
+        int outY = Mathf.RoundToInt(worldPosition.y / _cellSizeY);
+        int outZ = Mathf.RoundToInt(worldPosition.z / _cellSize);
         return (outX, outY, outZ);
     }
 

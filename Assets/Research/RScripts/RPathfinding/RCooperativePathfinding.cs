@@ -17,6 +17,7 @@ public class RCooperativePathfinding : MonoBehaviour{
     private bool _cpathing;
     private int _windowSize;
     private int _collisionWindowSize;
+    private WaitForSeconds _waitTime;
 
     #endregion
 
@@ -35,6 +36,7 @@ public class RCooperativePathfinding : MonoBehaviour{
         _cpathing = false;
         _windowSize = 2;
         _collisionWindowSize = 2;
+        _waitTime = new WaitForSeconds(1f);
 
     }
 
@@ -56,9 +58,13 @@ public class RCooperativePathfinding : MonoBehaviour{
     // Queue RAgents into pathfinding
     public void RequestCooperativePath(RAgent agent, Vector3 targetPosition) {
 
-        // Assign Goal
+        // Find goal
         (int x, int y, int z) = _grid.GetCoord(targetPosition);
-        RGridNode targetNode = _grid.GetGridItem(x, y, z);
+        RGridNode targetNode = _grid.GetGridItem(x, (y < 0)? 0 : y, z);
+        if (targetNode == null)
+            return;
+
+        // Assign Goal
         _goalList[agent] = targetNode;
 
         // Queue Agent
@@ -88,9 +94,10 @@ public class RCooperativePathfinding : MonoBehaviour{
             _cpathing = false;
             return;
         }
+        List<RAgent> cpathingRAgents = _cpathingRAgents;
 
         // Plan Paths for each agent
-        foreach (var agent in _cpathingRAgents) {
+        foreach (var agent in cpathingRAgents) {
 
             // Cache goal
             RGridNode goalNode = _goalList[agent];
@@ -109,8 +116,10 @@ public class RCooperativePathfinding : MonoBehaviour{
             List<RGridNode> path = _pf.FindPath(_resTableList[agent], 
                 x0, y0, z0, 
                 goalNode.x, (goalNode.y < 0)? 0 : goalNode.y, goalNode.z);
-            if (path == null)
+            if (path == null) {
+                StartCoroutine(Wait(agent));
                 continue;
+            }
 
             // Store path
             _pathList[agent] = path;
@@ -147,7 +156,7 @@ public class RCooperativePathfinding : MonoBehaviour{
                 RGridNode node = path[i];
 
                 // Testing Purposes
-                Debug.Log("Time: " + i + ", " + node.ToString());
+                // Debug.Log("Time: " + i + ", " + node.ToString());
 
                 for (int j = -_collisionWindowSize; j <= _collisionWindowSize; j++) {
 
@@ -176,20 +185,22 @@ public class RCooperativePathfinding : MonoBehaviour{
 
         // Stop cooperative pathfinding if no collisions found
         if (collisionTime == int.MaxValue) {
+
+            // Testing Purposes
+            // Debug.Log("Collision not found!");
+
+            // Stop cooperative pathfinding
             _cpathing = false;
 
             // Reset pathing list
             _cpathingRAgents = new List<RAgent>();
-
-            // Testing Purposes
-            Debug.Log("Collision not found!");
         } 
         
         // Resolve Conflicts
         else { 
 
             // Testing Purposes
-            Debug.Log("Collision found!");
+            // Debug.Log("Collision found!");
 
             // Create new pathingList
             _cpathingRAgents = new List<RAgent>();
@@ -221,11 +232,12 @@ public class RCooperativePathfinding : MonoBehaviour{
         // Follow Paths
 
         // Iterate through all paths
-        foreach (var entry in _pathList) {
+        foreach (var agent in cpathingRAgents) {
 
+            // ensure path exists!!!s
             // Convert path
             List<Vector3> vectorPath = new List<Vector3>();
-            foreach (var node in entry.Value) {
+            foreach (var node in _pathList[agent]) {
                 vectorPath.Add(_grid.GetWorld(node.x, node.y, node.z));
             }
 
@@ -234,8 +246,14 @@ public class RCooperativePathfinding : MonoBehaviour{
                 continue;
 
             // Follow paths
-            entry.Key.FollowPath(vectorPath);
+            agent.FollowPath(vectorPath);
         }
+    }
+
+    // Wait if no path found
+    private IEnumerator Wait(RAgent agent) {
+        yield return _waitTime;
+        _ragentQueue.Enqueue(agent);
     }
 
     #endregion
