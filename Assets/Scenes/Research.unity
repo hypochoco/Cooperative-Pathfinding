@@ -1536,6 +1536,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cpf: {fileID: 1848326484}
+  _agentList:
+  - {fileID: 1794782989}
+  - {fileID: 1306700877}
 --- !u!114 &1848326484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1548,9 +1551,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4d89c68f382d1f41b89552e4a7134ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _agentList:
-  - {fileID: 1794782989}
-  - {fileID: 1306700877}
   _gridConstructor: {fileID: 1706042498}
 --- !u!1 &2011350304
 GameObject:
