@@ -8,6 +8,7 @@ public class RAgent : MonoBehaviour {
     #region RAgent Variables
 
     // RAgent Variables
+    [SerializeField] private bool _debug;
     [SerializeField] private Transform _t;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Renderer _r;
@@ -147,6 +148,8 @@ public class RAgent : MonoBehaviour {
     // Testing Purposes
     public RPath DebugPath;
     public void OnDrawGizmos() {
+        if (!_debug)
+            return;
         if (DebugPath != null)
             DebugPath.DrawWithGizmos();
     }

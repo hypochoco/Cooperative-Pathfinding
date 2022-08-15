@@ -7,7 +7,7 @@ public class RCooperativePathfinding : MonoBehaviour{
 
     // RCooperativePathfinding Variables
     private RPathfinding _pf;
-    private List<RAgent> _pathingRAgents;
+    private List<RAgent> _cpathingRAgents;
     private Queue<RAgent> _ragentQueue;
     private Dictionary<RAgent, RGridNode> _goalList;
     private Dictionary<RAgent, List<RGridNode>> _pathList;
@@ -16,6 +16,7 @@ public class RCooperativePathfinding : MonoBehaviour{
     private RGrid<RGridNode> _grid;
     private bool _cpathing;
     private int _windowSize;
+    private int _collisionWindowSize;
 
     #endregion
 
@@ -26,13 +27,14 @@ public class RCooperativePathfinding : MonoBehaviour{
         // Initialize Variables
         _grid = _gridConstructor.Grid;
         _pf = new RPathfinding(_grid);
-        _pathingRAgents = new List<RAgent>();
+        _cpathingRAgents = new List<RAgent>();
         _ragentQueue = new Queue<RAgent>();
         _goalList = new Dictionary<RAgent, RGridNode>();
         _pathList = new Dictionary<RAgent, List<RGridNode>>();
         _resTableList = new Dictionary<RAgent, RResTable<RGridNode>>();
         _cpathing = false;
         _windowSize = 2;
+        _collisionWindowSize = 2;
 
     }
 
@@ -46,9 +48,6 @@ public class RCooperativePathfinding : MonoBehaviour{
         Cycle();
         
     }
-
-    // TODO:
-        // - Ensure everything is safe
 
     #endregion
 
@@ -82,28 +81,25 @@ public class RCooperativePathfinding : MonoBehaviour{
 
         // Plan Paths
 
-        // Dequeue RAgents
-        while (_ragentQueue.Count > 0) {
-            _pathingRAgents.Add(_ragentQueue.Dequeue());
+        // Update pathing RAgents
+        while (_ragentQueue.Count > 0)
+            _cpathingRAgents.Add(_ragentQueue.Dequeue());
+        if (_cpathingRAgents.Count == 0) {
+            _cpathing = false;
+            return;
         }
-        
-        // Cache a list of agents
-        List<RAgent> agentList = (_pathingRAgents.Count == 0)? 
-            new List<RAgent>(_goalList.Keys) : _pathingRAgents;
 
         // Plan Paths for each agent
-        foreach (var agent in agentList) {
+        foreach (var agent in _cpathingRAgents) {
+
+            // Cache goal
+            RGridNode goalNode = _goalList[agent];
+            if (goalNode == null)
+                continue;
 
             // Ensure ResTable exists
             if (!_resTableList.ContainsKey(agent))
                 _resTableList[agent] = new RResTable<RGridNode>();
-
-            // Cache goal
-            RGridNode goalNode = _goalList[agent];
-            
-            // Skip if no goal
-            if (goalNode == null)
-                continue;
 
             // TODO: ensure cases on and off the grid
 
@@ -113,8 +109,6 @@ public class RCooperativePathfinding : MonoBehaviour{
             List<RGridNode> path = _pf.FindPath(_resTableList[agent], 
                 x0, y0, z0, 
                 goalNode.x, (goalNode.y < 0)? 0 : goalNode.y, goalNode.z);
-
-            // Ensure path found
             if (path == null)
                 continue;
 
@@ -132,43 +126,47 @@ public class RCooperativePathfinding : MonoBehaviour{
         List<(RAgent, RAgent)> agentPairList = 
             new List<(RAgent, RAgent)>();
 
-        // Find Collisions
-        foreach (var agent in agentList) {
+        // Search for collisions
+        foreach (var entry in _pathList) {
             
-            // Cach PathIndex
+            // Cache RAgent and path
+            RAgent agent = entry.Key;
+            List<RGridNode> path = entry.Value;
+
+            // Ensure correct timing
             int pathIndex = agent.PathIndex;
-
-            // Ensure PathIndex
-            if (pathIndex >= _pathList[agent].Count)
+            if (pathIndex >= path.Count)
                 continue;
-
-            // Cache Path
-            List<RGridNode> path = _pathList[agent].
+            path = _pathList[agent].
                 GetRange(pathIndex, _pathList[agent].Count - pathIndex);
-
-            // Ensure Pathing
-            if (path == null)
-                continue;
             
-            // Search for Collisions
+            // Search for Collisions per node
             for (int i = 0; i < path.Count; i++) {
 
                 // Cache Node
                 RGridNode node = path[i];
-                for (int j = -1; j <= 1; j++) {
-                    try {
-                        if (travelList[(i + j, node)] != null) {
-                            if (i + j < collisionTime) {
-                                collisionTime = i + j;
-                                agentPairList = new List<(RAgent, RAgent)>();
-                                agentPairList.Add((agent, travelList[(i + j, node)]));
-                            } else if (i + j == collisionTime) {
-                                agentPairList.Add((agent, travelList[(i + j, node)]));
-                            }
+
+                // Testing Purposes
+                Debug.Log("Time: " + i + ", " + node.ToString());
+
+                for (int j = -_collisionWindowSize; j <= _collisionWindowSize; j++) {
+
+                    // Collision exists
+                    if (travelList.ContainsKey((i + j, node))) {
+
+                        // Check for first collision
+                        if (i + j < collisionTime) {
+                            collisionTime = i + j;
+                            agentPairList = new List<(RAgent, RAgent)>();
+                            agentPairList.Add((agent, travelList[(i + j, node)]));
+                        } else if (i + j == collisionTime) {
+                            agentPairList.Add((agent, travelList[(i + j, node)]));
                         }
-                    } catch (KeyNotFoundException) {
-                        if (j == 0)
-                            travelList[(i, node)] = agent;
+                    } 
+                    
+                    // Collision doesn't exist
+                    else if (j == 0) {
+                        travelList[(i, node)] = agent;
                     }
                 }
             }
@@ -179,25 +177,44 @@ public class RCooperativePathfinding : MonoBehaviour{
         // Stop cooperative pathfinding if no collisions found
         if (collisionTime == int.MaxValue) {
             _cpathing = false;
+
+            // Reset pathing list
+            _cpathingRAgents = new List<RAgent>();
+
+            // Testing Purposes
+            Debug.Log("Collision not found!");
         } 
         
         // Resolve Conflicts
         else { 
 
+            // Testing Purposes
+            Debug.Log("Collision found!");
+
+            // Create new pathingList
+            _cpathingRAgents = new List<RAgent>();
+
             // Iterate through conflicts
             foreach (var agentPair in agentPairList) {
 
+                // Designate conflict owner
+                RAgent owner = agentPair.Item1;
+                RAgent observer = agentPair.Item2;
+
+                // Assign pathing list
+                _cpathingRAgents.Add(observer);
+
                 // Reserve Window
                 for (int i = -_windowSize; i <= _windowSize; i++) {
-                    _resTableList[agentPair.Item2].
-                        Reserve(_pathList[agentPair.Item1][collisionTime + i]);
+                    _resTableList[observer].
+                        Reserve(_pathList[owner][collisionTime + i]);
                 }
 
                 // Truncate Path
                 int pathCount = (collisionTime - _windowSize - 1 >= 0)?  
                     collisionTime - _windowSize - 1 : 0; 
-                _pathList[agentPair.Item2] = 
-                    _pathList[agentPair.Item2].GetRange(0, pathCount);
+                _pathList[observer] = 
+                    _pathList[observer].GetRange(0, pathCount);
             }
         }
 

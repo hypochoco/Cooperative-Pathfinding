@@ -25,16 +25,30 @@ public class RPathRequestHandler : MonoBehaviour {
     // Testing Variables
     [SerializeField] List<RAgent> _agentList;
 
-    // Testing Pathfinding
+    private void Update() {
+
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            Test(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.W)) {
+            Test(1);
+        }
+
+    }
+
     public void Test() {
+        
+    }
+
+    // Testing Pathfinding
+    public void Test(int n) {
 
         List<Vector3> targetPositions = new List<Vector3>() {
             new Vector3(4f, 0f, 2f),
             new Vector3(2.5f, 0f, 1f),
         };
-        for (int i = 0; i < _agentList.Count; i++) {
-            RequestPath(_agentList[i], targetPositions[i]);
-        }
+        RequestPath(_agentList[n], targetPositions[n]);
 
     }
 

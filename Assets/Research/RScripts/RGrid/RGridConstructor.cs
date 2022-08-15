@@ -11,6 +11,7 @@ public class RGridConstructor : MonoBehaviour {
     
     // Grid Constructor Variables
     private RGrid<RGridNode> _grid; 
+    [SerializeField] private bool _debug;
 
     // Getters and Setters
     public RGrid<RGridNode> Grid {
@@ -36,6 +37,10 @@ public class RGridConstructor : MonoBehaviour {
 
     // Gizmos
     public void OnDrawGizmos() {
+
+        // Debug
+        if (!_debug)
+            return;
 
         // Null check
         if (_grid == null || _grid.Array == null)
