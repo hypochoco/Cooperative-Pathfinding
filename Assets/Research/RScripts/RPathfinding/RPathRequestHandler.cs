@@ -15,9 +15,7 @@ public class RPathRequestHandler : MonoBehaviour {
 
     // Request a path
     public void RequestPath(RAgent agent, Vector3 targetPositon) {
-        _cpf.AddRAgent(agent);
-        _cpf.AssignGoal(agent, targetPositon);
-        _cpf.CooperativePathing = true;
+        _cpf.RequestCooperativePath(agent, targetPositon);
     }
 
     #endregion

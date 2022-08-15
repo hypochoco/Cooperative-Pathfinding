@@ -7,7 +7,8 @@ public class RCooperativePathfinding : MonoBehaviour{
 
     // RCooperativePathfinding Variables
     private RPathfinding _pf;
-    private List<RAgent> _agentList; 
+    private List<RAgent> _pathingRAgents;
+    private Queue<RAgent> _ragentQueue;
     private Dictionary<RAgent, RGridNode> _goalList;
     private Dictionary<RAgent, List<RGridNode>> _pathList;
     private Dictionary<RAgent, RResTable<RGridNode>> _resTableList;
@@ -15,12 +16,6 @@ public class RCooperativePathfinding : MonoBehaviour{
     private RGrid<RGridNode> _grid;
     private bool _cpathing;
     private int _windowSize;
-
-    // Getters and Setters
-    public bool CooperativePathing {
-        get { return _cpathing; }
-        set { _cpathing = value; }
-    }
 
     #endregion
 
@@ -31,7 +26,8 @@ public class RCooperativePathfinding : MonoBehaviour{
         // Initialize Variables
         _grid = _gridConstructor.Grid;
         _pf = new RPathfinding(_grid);
-        _agentList = new List<RAgent>();
+        _pathingRAgents = new List<RAgent>();
+        _ragentQueue = new Queue<RAgent>();
         _goalList = new Dictionary<RAgent, RGridNode>();
         _pathList = new Dictionary<RAgent, List<RGridNode>>();
         _resTableList = new Dictionary<RAgent, RResTable<RGridNode>>();
@@ -45,58 +41,62 @@ public class RCooperativePathfinding : MonoBehaviour{
         // Do not run cooperative pathfinding
         if (!_cpathing)
             return;
-        
-        // Wait until truncated path has been reached...
-        
 
         // Cooperative Pathfinding
-
-        // Plan Paths
-        PlanPaths(_agentList);
-
-        // Find Conflicts
-        FindCollisions(out int collisionTime, 
-            out List<(RAgent, RAgent)> agentList);
-
-        // Stop if no collisions found, else resolve conflicts
-        if (collisionTime == int.MaxValue) {
-            _cpathing = false;
-        } else { // Resolve Conflicts
-            ResolveConflicts(collisionTime, agentList);
-        }
-
-        // Follow Paths
-        FollowPaths();
+        Cycle();
         
     }
 
     // TODO:
-        // - Remove Agents after they reached their goal
-        // - Better handle this whole agentsList
         // - Ensure everything is safe
-        // - Remove things that aren't needed
-        //   _pathList, _goalList, _resTables
 
     #endregion
 
     #region RCooperativePathfinding Functions
 
-    // Add agent to pathfinding
-    public void AddRAgent(RAgent agent) {
-        _agentList.Add(agent);
-        _resTableList[agent] = new RResTable<RGridNode>();
-    }
+    // Queue RAgents into pathfinding
+    public void RequestCooperativePath(RAgent agent, Vector3 targetPosition) {
 
-    // Assign Goals
-    public void AssignGoal(RAgent agent, Vector3 targetPosition) {
+        // Assign Goal
         (int x, int y, int z) = _grid.GetCoord(targetPosition);
         RGridNode targetNode = _grid.GetGridItem(x, y, z);
         _goalList[agent] = targetNode;
+
+        // Queue Agent
+        _ragentQueue.Enqueue(agent);
+
+        // Start Cooperative pathfinding
+        _cpathing = true;
+
     }
 
-    // Plan Paths
-    private void PlanPaths(List<RAgent> agentList) {
+    // Remove Agent
+    public void RemoveRAgent(RAgent agent) {
+        _goalList.Remove(agent);
+        _pathList.Remove(agent);
+        _resTableList.Remove(agent);
+    }
+
+    // Cooperative Pathfinding Cycle
+    private void Cycle() {
+
+        // Plan Paths
+
+        // Dequeue RAgents
+        while (_ragentQueue.Count > 0) {
+            _pathingRAgents.Add(_ragentQueue.Dequeue());
+        }
+        
+        // Cache a list of agents
+        List<RAgent> agentList = (_pathingRAgents.Count == 0)? 
+            new List<RAgent>(_goalList.Keys) : _pathingRAgents;
+
+        // Plan Paths for each agent
         foreach (var agent in agentList) {
+
+            // Ensure ResTable exists
+            if (!_resTableList.ContainsKey(agent))
+                _resTableList[agent] = new RResTable<RGridNode>();
 
             // Cache goal
             RGridNode goalNode = _goalList[agent];
@@ -120,40 +120,20 @@ public class RCooperativePathfinding : MonoBehaviour{
 
             // Store path
             _pathList[agent] = path;
+
         }
-    }
 
-    // Follow Paths
-    private void FollowPaths() {
-        foreach (var entry in _pathList) {
-
-            // Convert path
-            List<Vector3> vectorPath = new List<Vector3>();
-            foreach (var node in entry.Value) {
-                vectorPath.Add(_grid.GetWorld(node.x, node.y, node.z));
-            }
-
-            // Ensure path exists
-            if (vectorPath.Count == 0)
-                continue;
-
-            // follow paths
-            entry.Key.FollowPath(vectorPath);
-        }
-    }
-
-    // Collision Detection Function
-    private void FindCollisions(out int collisionTime, 
-        out List<(RAgent, RAgent)> agentList) {
+        // Find First Collision
 
         // Collision Variables
+        int collisionTime = int.MaxValue;
         Dictionary<(int, RGridNode), RAgent> travelList = 
             new Dictionary<(int, RGridNode), RAgent>();
-        collisionTime = int.MaxValue;
-        agentList = new List<(RAgent, RAgent)>();
-        
-        // Find First Conflict
-        foreach (var agent in _agentList) {
+        List<(RAgent, RAgent)> agentPairList = 
+            new List<(RAgent, RAgent)>();
+
+        // Find Collisions
+        foreach (var agent in agentList) {
             
             // Cach PathIndex
             int pathIndex = agent.PathIndex;
@@ -180,10 +160,10 @@ public class RCooperativePathfinding : MonoBehaviour{
                         if (travelList[(i + j, node)] != null) {
                             if (i + j < collisionTime) {
                                 collisionTime = i + j;
-                                agentList = new List<(RAgent, RAgent)>();
-                                agentList.Add((agent, travelList[(i + j, node)]));
+                                agentPairList = new List<(RAgent, RAgent)>();
+                                agentPairList.Add((agent, travelList[(i + j, node)]));
                             } else if (i + j == collisionTime) {
-                                agentList.Add((agent, travelList[(i + j, node)]));
+                                agentPairList.Add((agent, travelList[(i + j, node)]));
                             }
                         }
                     } catch (KeyNotFoundException) {
@@ -193,24 +173,51 @@ public class RCooperativePathfinding : MonoBehaviour{
                 }
             }
         }
-    }
 
-    // Resolve Conflicts
-    private void ResolveConflicts(int collisionTime, List<(RAgent, RAgent)> agentList) {
         // Resolve Conflicts
-        foreach (var agentPair in agentList) {
 
-            // Reserve Window
-            for (int i = -_windowSize; i <= _windowSize; i++) {
-                _resTableList[agentPair.Item2].
-                    Reserve(_pathList[agentPair.Item1][collisionTime + i]);
+        // Stop cooperative pathfinding if no collisions found
+        if (collisionTime == int.MaxValue) {
+            _cpathing = false;
+        } 
+        
+        // Resolve Conflicts
+        else { 
+
+            // Iterate through conflicts
+            foreach (var agentPair in agentPairList) {
+
+                // Reserve Window
+                for (int i = -_windowSize; i <= _windowSize; i++) {
+                    _resTableList[agentPair.Item2].
+                        Reserve(_pathList[agentPair.Item1][collisionTime + i]);
+                }
+
+                // Truncate Path
+                int pathCount = (collisionTime - _windowSize - 1 >= 0)?  
+                    collisionTime - _windowSize - 1 : 0; 
+                _pathList[agentPair.Item2] = 
+                    _pathList[agentPair.Item2].GetRange(0, pathCount);
             }
-            
-            // Truncate Path
-            int pathCount = (collisionTime - _windowSize - 1 >= 0)?  
-                collisionTime - _windowSize - 1 : 0; 
-            _pathList[agentPair.Item2] = 
-                _pathList[agentPair.Item2].GetRange(0, pathCount);
+        }
+
+        // Follow Paths
+
+        // Iterate through all paths
+        foreach (var entry in _pathList) {
+
+            // Convert path
+            List<Vector3> vectorPath = new List<Vector3>();
+            foreach (var node in entry.Value) {
+                vectorPath.Add(_grid.GetWorld(node.x, node.y, node.z));
+            }
+
+            // Ensure path exists
+            if (vectorPath.Count == 0)
+                continue;
+
+            // Follow paths
+            entry.Key.FollowPath(vectorPath);
         }
     }
 
